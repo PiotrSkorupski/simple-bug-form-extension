@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
+import { Hello } from "./components/hello";
 
 class Greetings extends React.Component
 {
@@ -10,7 +11,18 @@ class Greetings extends React.Component
     }
 }
 
+class SimpleBugFormHubContent extends React.Component {
+    render() {
+        return (
+            <div>
+                <Hello/>
+                <Greetings/>
+            </div>
+        );
+    }
+}
+
 ReactDOM.render(
-    React.createElement(Greetings, { name : 'Piotrsko' }),
+    React.createElement(SimpleBugFormHubContent, { name : 'Piotrsko' }),
     document.getElementById('report-bug-root')
     );
