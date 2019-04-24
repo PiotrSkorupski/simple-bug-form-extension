@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,
@@ -35,7 +35,7 @@
             "addressable": true
         },
         {
-            "path": "src",
+            "path": "dist",
             "addressable": true
         }
     ]
