@@ -1,0 +1,42 @@
+{
+    "manifestVersion": 1,
+    "id": "simple-bug-form-extension",
+    "publisher": "Piotrsko",
+    "version": "1.0.1",
+    "name": "Simple bug report form",
+    "description": "Simple bug report form extension",
+    "public": false,
+    "categories": ["Azure Boards"],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "simple-bug-hub",
+            "type": "ms.vss-web.hub",
+            "targets": [
+                "ms.vss-work-web.work-hub-group"
+            ],
+            "properties": {
+                "name": "Report a bug",
+                "uri": "bug.html"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "bug.html",
+            "addressable": true
+        },
+        {
+            "path": "node_modules/vss-web-extension-sdk/lib",
+            "addressable": true
+        },
+        {
+            "path": "src",
+            "addressable": true
+        }
+    ]
+}
