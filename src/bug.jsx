@@ -2,6 +2,12 @@ import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { Hello } from "./components/hello";
 
+//import DevOps React UI components
+import { Header, TitleSize } from "azure-devops-ui/Header";
+import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
+import { Page } from "azure-devops-ui/Page";
+import { Tab, TabBar, TabSize } from "azure-devops-ui/Tabs";
+
 class Greetings extends React.Component
 {
     render()
@@ -14,10 +20,9 @@ class Greetings extends React.Component
 class SimpleBugFormHubContent extends React.Component {
     render() {
         return (
-            <div>
-                <Hello/>
-                <Greetings/>
-            </div>
+            <Page className="sample-hub flex-grow">
+            <Header title="Sample Hub"/>
+            </Page>
         );
     }
 }
