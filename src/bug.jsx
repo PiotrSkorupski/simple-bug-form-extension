@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
+import * as SDK from "azure-devops-extension-sdk";
+import { CommonServiceIds, IHostPageLayoutService } from "azure-devops-extension-api";
 import { Hello } from "./components/hello";
 
 //import DevOps React UI components
@@ -11,15 +13,6 @@ import {AllBugs} from "./components/AllBugs";
 import {MyOpenBugs} from "./components/MyOpenBugs";
 import {Button} from "azure-devops-ui/Button";
 import {Panel} from "azure-devops-ui/Panel";
-
-class Greetings extends React.Component
-{
-    render()
-    {
-        //return React.createElement('h1', null, 'React, ' + this.props.name + '!');
-        return <h1>H1 with JSX</h1>;
-    }
-}
 
 class SimpleBugFormHubContent extends React.Component {
 
@@ -70,7 +63,7 @@ class SimpleBugFormHubContent extends React.Component {
             {
                 id: "panel",
                 text: "Submit a bug",
-                //onActivate: () => { this.onPanelClick() },
+                onActivate: () => { this.onPanelClick() },
                 iconProps: {
                     iconName: 'Add'
                 },
@@ -80,6 +73,23 @@ class SimpleBugFormHubContent extends React.Component {
                 }
             }
         ]);
+    }
+
+    async onPanelClick() {
+        const panelService = await SDK.getService(CommonServiceIds.IHostPageLayoutService);
+        panelService.openPanel(SDK.getExtensionContext().id + ".panel-content", {
+            title: "My Panel",
+            description: "Description of my panel",
+            configuration: {
+                message: "Show header description?",
+                initialValue: !!this.state.headerDescription
+            },
+            onClose: (result) => {
+                if (result !== undefined) {
+                    this.setState({ headerDescription: result ? "This is a header description" : undefined });
+                }
+            }
+        });
     }
 }
 
