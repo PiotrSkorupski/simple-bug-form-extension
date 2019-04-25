@@ -1,11 +1,11 @@
 module.exports = {
-    entry: ['babel-polyfill','./src/bug.jsx'],
+    entry: ['./src/bug.tsx'],
     module: {
         rules: [
           {
-            test: /\.(js|jsx)$/,
+            test: /\.tsx?$/,
             exclude: /node_modules/,
-            use: ['babel-loader']
+            use: ['ts-loader']
           },
           {
             test: /\.css$/,
@@ -19,8 +19,9 @@ module.exports = {
           }
         ]
     },
+    devtool: "source-map",
     resolve: {
-        extensions: ['*', '.js', '.jsx']
+        extensions: [".ts", ".tsx", ".js"]
     },
     output: {
       path: __dirname + '/dist',
