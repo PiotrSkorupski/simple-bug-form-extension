@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-    "version": "1.0.77",
+    "version": "1.0.84",
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,
@@ -23,7 +23,8 @@
                 "ms.vss-tfs-web.tfs-page-data-service",
                 "ms.vss-features.host-navigation-service",
                 "ms.vss-features.extension-data-service",
-                "ms.vss-features.host-dialog-service"
+                "ms.vss-features.host-dialog-service",
+                "ms.vss-features.host-page-layout-service"
             ],
             "properties": {
                 "name": "Report a bug",
