@@ -4,6 +4,6 @@ import { IAllBugsState } from "./AllBugs.Props";
 
 export class AllBugs extends React.Component<{}, IAllBugsState> {
     render(): JSX.Element{
-        return (<div>My bugs here</div>);
+        return (<div></div>);
     };
 }

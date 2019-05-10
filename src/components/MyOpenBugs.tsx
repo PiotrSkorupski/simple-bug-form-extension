@@ -4,6 +4,6 @@ import { IMyOpenBugsState } from './MyOpenBugs.Props';
 
 export class MyOpenBugs extends React.Component<{}, IMyOpenBugsState> {
     render(): JSX.Element{
-        return (<div>My bugs here</div>);
+        return (<div></div>);
     };
 }

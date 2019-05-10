@@ -24,10 +24,7 @@ module.exports = {
       /^VSS\/.*/, /^TFS\/.*/, /^q$/
     ],
     resolve: {
-        extensions: [".ts", ".tsx", ".js"],
-        modules: [
-          "./node_modules"
-        ]
+        extensions: [".ts", ".tsx", ".js"]
     },
     output: {
       path: __dirname + '/dist',

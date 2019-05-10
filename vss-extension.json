@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-    "version": "1.0.123",
+    "version": "1.0.137",
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,
@@ -44,15 +44,6 @@
         },
         {
             "path": "dist",
-            "addressable": true
-        },
-        {
-            "path": "node_modules/vss-web-extension-sdk/lib",
-            "addressable": true,
-            "packagePath": "lib"
-        },
-        {
-            "path": "node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js", 
             "addressable": true
         }
     ]

@@ -10,10 +10,10 @@ import { FormItem } from "azure-devops-ui/FormItem";
 //import { IWorkItemFormNavigationService, WorkItemTrackingRestClient, WorkItemTrackingServiceIds } from "azure-devops-extension-api/WorkItemTracking";
 //const vss = require('VSS');
 //import * from "vss-web-extension-sdk";
-import RestClient = require("TFS/Work/RestClient");
-import CoreContracts = require("TFS/Core/Contracts");
-import WorkContracts = require("TFS/Work/Contracts");
-import RestClientWI = require("TFS/WorkItemTracking/RestClient");
+// import RestClient = require("TFS/Work/RestClient");
+// import CoreContracts = require("TFS/Core/Contracts");
+// import WorkContracts = require("TFS/Work/Contracts");
+// import RestClientWI = require("TFS/WorkItemTracking/RestClient");
 
 const bugTitle = new ObservableValue<string>("");
 const bugDescription = new ObservableValue<string>("");
@@ -39,11 +39,13 @@ export class NewBugPanel extends React.Component<{}, INewBugPanelState> {
     }
 
     public componentDidMount() {
+        console.log("NewBugPanel componentDidMount");
         //SDK.init();
         //vss.init();
     }
 
     public render(): JSX.Element {
+        console.log("Render NewBugPanel");
         return (
             <div>
                 {this.state.expanded && (
@@ -153,19 +155,23 @@ export class NewBugPanel extends React.Component<{}, INewBugPanelState> {
 
         //const witSvc = await SDK.getService<IWorkItemFormNavigationService>(WorkItemTrackingServiceIds.WorkItemFormNavigationService);
         // var item = witSvc.openWorkItem(4);
-        VSS.init(
-            {
-                explicitNotifyLoaded: true,
-                usePlatformScripts: true
-            }
-        );
-        
-        var client = RestClient.getClient();
-        var clientwi = RestClientWI.getClient();
+        // VSS.init(
+        //     {
+        //         explicitNotifyLoaded: true,
+        //         usePlatformScripts: true
+        //     }
+        // );
 
-        clientwi.getWorkItem(4).then((wi) => {
-            console.log("Got work item: " + wi.fields["System.Title"]);
-        });
+        // console.log("VSS user context: " + VSS.getWebContext().user.name);
+
+        //VSS.getService()
+
+        //var client = RestClient.getClient();
+        //var clientwi = RestClientWI.getClient();
+
+        //clientwi.getWorkItem(4).then((wi) => {
+        //    console.log("Got work item: " + wi.fields["System.Title"]);
+        //});
         
     }
 

@@ -42,6 +42,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     private newBugPanelComponent = React.createRef<NewBugPanel>();
 
     render() {
+        console.log("SimpleBugFormHubContent render start");
         return (
             <Page className="flex-grow">
             <Header title="Report a bug" titleSize={TitleSize.Large} commandBarItems={this.getCommandBarItems()}/>
@@ -61,12 +62,15 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     }
 
     getPageContent() {
+        console.log("getPageContent");
         const { selectedTabId } = this.state;
         
         if (selectedTabId === "my-open-bugs")
             return <MyOpenBugs/>;
+            //return "Testing";
         if (selectedTabId === "my-all-bugs")
             return <AllBugs/>;
+            //return "Testing";
     }
 
     onSelectedTabChanged(newTabId: string) {
@@ -79,6 +83,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     }
 
     getCommandBarItems() {
+        console.log("getCommandBarItems");
         return ([
             {
                 id: "panel",

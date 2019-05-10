@@ -1,0 +1,89 @@
+[33mcommit 1f6bed9b66988d6b9f2aeb4bd9a453d73d17de2f[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Fri May 10 16:26:08 2019 +0200
+
+    Added get work item stub. Code is not woking
+
+[33mcommit fa11bd6d8c947f929289089cdaafc490127c0b7b[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Fri May 10 11:26:34 2019 +0200
+
+    Added form field to panel. Added simple validation
+
+[33mcommit 064d77415588077f5ed8c843c8907305abdb73dc[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Thu May 9 15:21:50 2019 +0200
+
+    Removed PanelService, added panel from azure-devops-ui library. Updated add bug button to show panel.
+
+[33mcommit 56a2606b07357aa99863e7b20374d743902bae40[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Thu Apr 25 16:24:52 2019 +0200
+
+    Added typescript. Removed VSS SDK package
+
+[33mcommit 4c25844372402a9c8c67858c7ec21f7e66e4e0ec[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Thu Apr 25 13:22:10 2019 +0200
+
+    Added azure-devops-extensions-sdk and api. Last commit before adding typescript
+
+[33mcommit 3ed0cf98c5510fe47caa923c0449986453b9a25e[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Thu Apr 25 12:56:12 2019 +0200
+
+    Added tab change event. Added button to show left panel
+
+[33mcommit 5cee0c0b17b46c7f9dbb065c39042983e413283d[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 15:29:25 2019 +0200
+
+    Added tabs form DevOps UI Library
+
+[33mcommit 4c4b0dc3cf25d3b954b70019a30ee95d0aef103b[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 14:16:34 2019 +0200
+
+    Added DevOps React UI Components lib
+
+[33mcommit 8eaa156bd199f3c6379519eb3d4690b897fa85d2[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 13:35:37 2019 +0200
+
+    Importing modules verified
+
+[33mcommit 57d5a861d3b9fa70fc277e4d5db2d8179cea539b[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 12:24:06 2019 +0200
+
+    Added BABEL to compile JSX
+
+[33mcommit a04ed2a4002cd314dfbd5829284cb37b3d131baa[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 11:43:36 2019 +0200
+
+    Added webpack
+
+[33mcommit 87b7bd89de5700b049dd5f9f4d2d4ec8b6862b25[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 11:38:29 2019 +0200
+
+    Added webpack
+
+[33mcommit 3315ea17a58f4a0138f584a5e4cee0c3b14e4988[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 09:56:41 2019 +0200
+
+    Moved react code from HTML to JS without import
+
+[33mcommit ee193ede447b84229e5f9884c9869d16c2921ab1[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 09:45:42 2019 +0200
+
+    Moved react code from HTML to JS
+
+[33mcommit 5e6c82b1283f87552dbdefdb7c9291510fe72c5f[m
+Author: Piotr Skorupski <piotrsko@microsoft.com>
+Date:   Wed Apr 24 09:41:51 2019 +0200
+
+    First commit
