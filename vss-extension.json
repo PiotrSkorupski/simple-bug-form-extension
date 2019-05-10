@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-    "version": "1.0.108",
+    "version": "1.0.123",
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,
@@ -24,13 +24,18 @@
                 "ms.vss-features.host-navigation-service",
                 "ms.vss-features.extension-data-service",
                 "ms.vss-features.host-dialog-service",
-                "ms.vss-features.host-page-layout-service"
+                "ms.vss-features.host-page-layout-service",
+                "ms.vss-work-web.work-item-form-navigation-service",
+                "ms.vss-work-web.work-hub-group"
             ],
             "properties": {
                 "name": "Report a bug",
                 "uri": "bug.html"
             }
         }
+    ],
+    "scopes": [
+        "vso.work_full"
     ],
     "files": [
         {
@@ -39,6 +44,15 @@
         },
         {
             "path": "dist",
+            "addressable": true
+        },
+        {
+            "path": "node_modules/vss-web-extension-sdk/lib",
+            "addressable": true,
+            "packagePath": "lib"
+        },
+        {
+            "path": "node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js", 
             "addressable": true
         }
     ]

@@ -18,7 +18,9 @@
           "es2015.promise"
         ],
         "types": [
-            "react"
+            "vss-web-extension-sdk",
+            "react",
+            "node"
         ]
     }
 }

@@ -5,6 +5,15 @@ import { INewBugPanelState } from "./NewBugPanel.Props";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import { FormItem } from "azure-devops-ui/FormItem";
+//import * as SDK from "azure-devops-extension-sdk";
+//import { CommonServiceIds, getClient, IProjectPageService } from "azure-devops-extension-api";
+//import { IWorkItemFormNavigationService, WorkItemTrackingRestClient, WorkItemTrackingServiceIds } from "azure-devops-extension-api/WorkItemTracking";
+//const vss = require('VSS');
+//import * from "vss-web-extension-sdk";
+import RestClient = require("TFS/Work/RestClient");
+import CoreContracts = require("TFS/Core/Contracts");
+import WorkContracts = require("TFS/Work/Contracts");
+import RestClientWI = require("TFS/WorkItemTracking/RestClient");
 
 const bugTitle = new ObservableValue<string>("");
 const bugDescription = new ObservableValue<string>("");
@@ -27,6 +36,11 @@ export class NewBugPanel extends React.Component<{}, INewBugPanelState> {
             bugDescriptionErrorMessage: constBugDescriptionErrorMessage,
             reproStepsErrorMessage: constReproStepsErorrMessage
         };
+    }
+
+    public componentDidMount() {
+        //SDK.init();
+        //vss.init();
     }
 
     public render(): JSX.Element {
@@ -127,8 +141,32 @@ export class NewBugPanel extends React.Component<{}, INewBugPanelState> {
         this.setState({expanded: true})
     }
 
-    private createNewBug() {
+    private async createNewBug() {
         console.log("NewBugPanel.createNewBug. Bug title: " + bugTitle.value);
+
+        //console.log('Submit a bug clicked: ' + SDK.getExtensionContext().id + ".panel-content");
+
+        //const sdkHost = await SDK.getHost();
+        //const sdkUser = await SDK.getUser();
+        //console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
+
+
+        //const witSvc = await SDK.getService<IWorkItemFormNavigationService>(WorkItemTrackingServiceIds.WorkItemFormNavigationService);
+        // var item = witSvc.openWorkItem(4);
+        VSS.init(
+            {
+                explicitNotifyLoaded: true,
+                usePlatformScripts: true
+            }
+        );
+        
+        var client = RestClient.getClient();
+        var clientwi = RestClientWI.getClient();
+
+        clientwi.getWorkItem(4).then((wi) => {
+            console.log("Got work item: " + wi.fields["System.Title"]);
+        });
+        
     }
 
     private updateFormValid(): void {
