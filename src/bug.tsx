@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
-import * as SDK from "azure-devops-extension-sdk";
-import { CommonServiceIds, IHostPageLayoutService } from "azure-devops-extension-api";
+//import * as SDK from "azure-devops-extension-sdk";
+//import { CommonServiceIds, IHostPageLayoutService } from "azure-devops-extension-api";
 
 //import DevOps React UI components
 import { Header, TitleSize } from "azure-devops-ui/Header";
@@ -35,7 +35,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
 
     public componentDidMount() {
         console.log('Component indeed did mount');
-        SDK.init();
+        //SDK.init();
         //this.initializeFullScreenState();
     }
 
@@ -122,12 +122,12 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     // }
 
     private async onPanelClick(): Promise<void> {
-        console.log('Submit a bug clicked: ' + SDK.getExtensionContext().id + ".panel-content");
+        // console.log('Submit a bug clicked: ' + SDK.getExtensionContext().id + ".panel-content");
 
-        const sdkHost = await SDK.getHost();
-        const sdkUser = await SDK.getUser();
+        // const sdkHost = await SDK.getHost();
+        // const sdkUser = await SDK.getUser();
         
-        console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
+        // console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
         const panel = this.newBugPanelComponent.current;
         if (panel) {
             panel.showPanel();
@@ -147,8 +147,8 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         const fullScreenMode = !this.state.fullScreenMode;
         this.setState({ fullScreenMode });
 
-        const layoutService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
-        layoutService.setFullScreenMode(fullScreenMode);
+        //const layoutService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
+        //layoutService.setFullScreenMode(fullScreenMode);
     }
 }
 
