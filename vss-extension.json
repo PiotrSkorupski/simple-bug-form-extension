@@ -2,11 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-<<<<<<< HEAD
     "version": "1.0.137",
-=======
-    "version": "1.0.110",
->>>>>>> AddingRestClient
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,

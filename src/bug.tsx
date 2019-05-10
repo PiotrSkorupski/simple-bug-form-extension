@@ -132,11 +132,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         // const sdkHost = await SDK.getHost();
         // const sdkUser = await SDK.getUser();
         
-<<<<<<< HEAD
-        //console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
-=======
         // console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
->>>>>>> AddingRestClient
         const panel = this.newBugPanelComponent.current;
         if (panel) {
             panel.showPanel();
@@ -156,15 +152,9 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     //     const fullScreenMode = !this.state.fullScreenMode;
     //     this.setState({ fullScreenMode });
 
-<<<<<<< HEAD
-    //     const layoutService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
-    //     layoutService.setFullScreenMode(fullScreenMode);
-    // }
-=======
         //const layoutService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
         //layoutService.setFullScreenMode(fullScreenMode);
-    }
->>>>>>> AddingRestClient
+    //}
 }
 
 ReactDOM.render(
