@@ -14,6 +14,16 @@ const constBugTitleErrorMessage = "Bug title cannot be empty";
 const constBugDescriptionErrorMessage = "Description cannot be empty";
 const constReproStepsErorrMessage = "Repro steps cannot be empty";
 
+interface IBugWitPatch {
+    op: string;
+    path: string;
+    value: string;
+    from: string | null;
+}
+
+interface IBugWitPatchArray extends Array<IBugWitPatch>{}
+
+
 export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBugPanelState> {
     constructor(props: INewBugPanelProperties) {
         super(props);
@@ -132,11 +142,21 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
         console.log("NewBugPanel.createNewBug. Bug title: " + bugTitle.value);
         let currentProjectName = this.props.currentProjectName;
 
+        //Create JSON Patch object
+        var bugWitPatchArray: IBugWitPatchArray = [{
+            op: "add",
+            path: "/fields/System.Title",
+            from: null,
+            value: bugTitle.value
+        }];
+
         console.log("Creating new bug in project: " + this.props.currentProjectName)
         VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
             var witClient = witRestClient.getClient();
 
-            var sampleWitJsonPatch = '[{"op": "add","path": "/fields/System.Title","from": null,"value": "Sample task"}]';
+            //var sampleWitJsonPatch = '[{"op": "add","path": "/fields/System.Title","from": null,"value": "Sample task"}]';
+            var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
+
             var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), currentProjectName, "bug").then(
                 function(sampleWit:any) {
                     console.log(JSON.stringify(sampleWit));
