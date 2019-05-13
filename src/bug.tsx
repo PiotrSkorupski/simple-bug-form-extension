@@ -1,7 +1,5 @@
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
-import * as SDK from "azure-devops-extension-sdk";
-import { CommonServiceIds, IHostPageLayoutService } from "azure-devops-extension-api";
 
 
 //import DevOps React UI components
