@@ -1,5 +1,5 @@
 module.exports = {
-    entry: ['./src/bug1.tsx'],
+    entry: ['./src/bug.tsx'],
     module: {
         rules: [
           {

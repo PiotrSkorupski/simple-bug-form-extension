@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as SDK from "azure-devops-extension-sdk";
 import { CommonServiceIds, IHostPageLayoutService } from "azure-devops-extension-api";
 
+
 //import DevOps React UI components
 import { Header, TitleSize } from "azure-devops-ui/Header";
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
@@ -31,12 +32,26 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         this.state = {selectedTabId: "my-open-bugs", fullScreenMode: false, newBugPanelExpanded: false};
 
         super(props);
+
     }
 
     public componentDidMount() {
-        console.log('Component indeed did mount, testing 1');
-        // SDK.init();
-        //this.initializeFullScreenState();
+        console.log('Component indeed did mount, testing 2');
+
+        console.log("Initializing VSS");
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true
+        });
+
+        console.log("VSS loaded");
+        VSS.notifyLoadSucceeded();
+        console.log("VSS sdk ready");
+        VSS.ready(function() {
+            console.log("VSS current user context: " + VSS.getWebContext().user.name);
+        });
+        
+        //SDK.init();
     }
 
     private newBugPanelComponent = React.createRef<NewBugPanel>();
@@ -95,60 +110,11 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         ]);
     }
 
-    // private async onPanelClick(): Promise<void> {
-    //     console.log('Submit a bug clicked: ' + SDK.getExtensionContext().id + ".panel-content");
-
-    //     const sdkHost = await SDK.getHost();
-    //     const sdkUser = await SDK.getUser();
-        
-    //     console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
-
-    //     const panelService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
-
-    //     console.log(panelService);
-    //     panelService.openPanel<boolean | undefined>(SDK.getExtensionContext().id + ".panel-content", {
-    //         title: "My Panel",
-    //         description: "Description of my panel",
-    //         configuration: {
-    //             message: "Show header description?",
-    //             initialValue: !!this.state.headerDescription
-    //         },
-    //         onClose: (result) => {
-    //             if (result !== undefined) {
-    //                 this.setState({ headerDescription: result ? "This is a header description" : undefined });
-    //             }
-    //         }
-    //     });
-    // }
-
     private async onPanelClick(): Promise<void> {
-        // console.log('Submit a bug clicked: ' + SDK.getExtensionContext().id + ".panel-content");
-
-        // const sdkHost = await SDK.getHost();
-        // const sdkUser = await SDK.getUser();
-        
-        // console.log('SDK Init. Collection: ' + sdkHost.name + ' Type: ' + sdkHost.type + ' ID: ' + sdkHost.id + ' User: ' + sdkUser.displayName);
         const panel = this.newBugPanelComponent.current;
         if (panel) {
             panel.showPanel();
         }
-    }
-
-    // private async initializeFullScreenState() {
-    //     const layoutService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
-    //     console.log(layoutService);
-    //     const fullScreenMode = await layoutService.getFullScreenMode();
-    //     if (fullScreenMode !== this.state.fullScreenMode) {
-    //         this.setState({ fullScreenMode });
-    //     }
-    // }
-
-    private async onToggleFullScreenMode(): Promise<void> {
-        const fullScreenMode = !this.state.fullScreenMode;
-        this.setState({ fullScreenMode });
-
-        // const layoutService = await SDK.getService<IHostPageLayoutService>(CommonServiceIds.HostPageLayoutService);
-        // layoutService.setFullScreenMode(fullScreenMode);
     }
 }
 
