@@ -29,7 +29,11 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     constructor(props: {}) {
         super(props);
         this.onSelectedTabChanged = this.onSelectedTabChanged.bind(this);
-        this.state = {selectedTabId: "my-open-bugs", fullScreenMode: false, newBugPanelExpanded: false};
+        this.state = {
+                selectedTabId: "my-open-bugs", 
+                fullScreenMode: false, 
+                newBugPanelExpanded: false
+            };
 
         super(props);
 
@@ -45,11 +49,25 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         });
 
         console.log("VSS loaded");
-        VSS.notifyLoadSucceeded();
         console.log("VSS sdk ready");
         VSS.ready(function() {
             console.log("VSS current user context: " + VSS.getWebContext().user.name);
+            console.log("VSS current user context: " + VSS.getWebContext().project.name);
+
+            //currentProjectName = VSS.getWebContext().project.name;
+            
+
+            VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+                var witClient = witRestClient.getClient();
+                var wits: any = witClient.getWorkItem(4).then(
+                    function(wits:any) {
+                        console.log(JSON.stringify(wits));
+                });
+            });
+
         });
+
+        VSS.notifyLoadSucceeded();
         
         //SDK.init();
     }
@@ -70,7 +88,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 <div className="page-content">
                     { this.getPageContent() }
                 </div>
-                <NewBugPanel ref={this.newBugPanelComponent}></NewBugPanel>
+                <NewBugPanel ref={this.newBugPanelComponent} currentProjectName="P1"></NewBugPanel>
             </Page>
         );
     }
@@ -82,6 +100,8 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
             return <MyOpenBugs/>;
         if (selectedTabId === "my-all-bugs")
             return <AllBugs/>;
+        
+
     }
 
     onSelectedTabChanged(newTabId: string) {

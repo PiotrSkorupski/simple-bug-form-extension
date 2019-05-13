@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-    "version": "1.0.190",
+    "version": "1.0.195",
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,
@@ -31,6 +31,9 @@
                 "uri": "bug.html"
             }
         }
+    ],
+    "scopes": [
+        "vso.work_full"
     ],
     "files": [
         {

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Button } from "azure-devops-ui/Button";
 import { Panel } from "azure-devops-ui/Panel";
-import { INewBugPanelState } from "./NewBugPanel.Props";
+import { INewBugPanelState } from "./NewBugPanel.State";
+import { INewBugPanelProperties } from "./NewBugPanel.Props";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import { FormItem } from "azure-devops-ui/FormItem";
@@ -13,8 +14,8 @@ const constBugTitleErrorMessage = "Bug title cannot be empty";
 const constBugDescriptionErrorMessage = "Description cannot be empty";
 const constReproStepsErorrMessage = "Repro steps cannot be empty";
 
-export class NewBugPanel extends React.Component<{}, INewBugPanelState> {
-    constructor(props: {}) {
+export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBugPanelState> {
+    constructor(props: INewBugPanelProperties) {
         super(props);
         this.state = { 
             expanded: false,
@@ -129,6 +130,18 @@ export class NewBugPanel extends React.Component<{}, INewBugPanelState> {
 
     private createNewBug() {
         console.log("NewBugPanel.createNewBug. Bug title: " + bugTitle.value);
+        let currentProjectName = this.props.currentProjectName;
+
+        console.log("Creating new bug in project: " + this.props.currentProjectName)
+        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+            var witClient = witRestClient.getClient();
+
+            var sampleWitJsonPatch = '[{"op": "add","path": "/fields/System.Title","from": null,"value": "Sample task"}]';
+            var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), currentProjectName, "bug").then(
+                function(sampleWit:any) {
+                    console.log(JSON.stringify(sampleWit));
+            });
+        });
     }
 
     private updateFormValid(): void {
