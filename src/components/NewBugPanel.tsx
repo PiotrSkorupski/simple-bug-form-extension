@@ -168,32 +168,53 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             value: bugReproSteps.value
         }];
 
+        //Show toast
+        this.props.showToast();
+
         console.log("Creating new bug in project: " + this.props.currentProjectName)
-        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
             var witClient = witRestClient.getClient();
 
             //var sampleWitJsonPatch = '[{"op": "add","path": "/fields/System.Title","from": null,"value": "Sample task"}]';
             var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
-
             var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), currentProjectName, "bug").then(
-                function(sampleWit:any) {
-                    console.log(JSON.stringify(sampleWit));
-            });
+                (sampleWit:any) => {
+                    this.props.fadeToast();
+                    this.clearForm();
+                    console.log(sampleWit)
+                }
+            );
         });
 
         //Hide panel
-        this.setState({expanded: false});
+        this.setState({expanded: false});    
+        
+    }
+
+    clearForm() {
+        this.setState({
+            createButtonDisabled: true,
+            cancelButtonDisabled: false,
+            formInputsDisabled: false,
+            isBugTitleError: true,
+            isBugDescriptionError: true,
+            isReproStepsError: true,
+            isFormValid: false
+        })
+        bugTitle.value = "";
+        bugDescription.value = "";
+        bugReproSteps.value = "";
     }
 
     private updateFormValid(): void {
-        console.log("updateFormValid. BugTitleError: " + this.state.isBugTitleError + " DescError " + this.state.isBugDescriptionError + " ReproError " + this.state.isReproStepsError);
+        //console.log("updateFormValid. BugTitleError: " + this.state.isBugTitleError + " DescError " + this.state.isBugDescriptionError + " ReproError " + this.state.isReproStepsError);
         if (!this.state.isBugTitleError && !this.state.isBugDescriptionError && !this.state.isReproStepsError) 
         {
-            console.log("Form valid");
+            //console.log("Form valid");
             this.setState({isFormValid: true});
             this.setState({createButtonDisabled: false});
         } else {
-            console.log("Form not valid");
+            //console.log("Form not valid");
             this.setState({isFormValid: false});
             this.setState({createButtonDisabled: true});
         }
