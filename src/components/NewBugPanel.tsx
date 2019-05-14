@@ -34,9 +34,11 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             isReproStepsError: true,
             isFormValid: false,
             createButtonDisabled: true,
+            cancelButtonDisabled: false,
             bugTitleErrorMessage: constBugTitleErrorMessage,
             bugDescriptionErrorMessage: constBugDescriptionErrorMessage,
-            reproStepsErrorMessage: constReproStepsErorrMessage
+            reproStepsErrorMessage: constReproStepsErorrMessage,
+            formInputsDisabled: false
         };
     }
 
@@ -51,7 +53,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                             "To report a bug or issue, please fill below form and click Create button."
                         }
                         footerButtonProps={[
-                            { text: "Cancel", onClick: () => this.setState({ expanded: false }) },
+                            { text: "Cancel", onClick: () => this.setState({ expanded: false }), disabled: this.state.createButtonDisabled },
                             { text: "Create", primary: true, onClick: () => this.createNewBug(), disabled: this.state.createButtonDisabled }
                         ]}
                     >
@@ -74,6 +76,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     }
                                     placeholder="Enter bug title"
                                     width={TextFieldWidth.standard}
+                                    disabled = {this.state.formInputsDisabled}
                                 />
                             </FormItem>
                             <br/>
@@ -100,6 +103,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     rows={4}
                                     width={TextFieldWidth.standard}
                                     placeholder="Enter bug description"
+                                    disabled = {this.state.formInputsDisabled}
                                 />
                             </FormItem>
                             <br/>
@@ -125,6 +129,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     rows={4}
                                     width={TextFieldWidth.standard}
                                     placeholder="Enter bug repro steps"
+                                    disabled = {this.state.formInputsDisabled}
                                 />
                             </FormItem>
                         </div>
@@ -142,12 +147,25 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
         console.log("NewBugPanel.createNewBug. Bug title: " + bugTitle.value);
         let currentProjectName = this.props.currentProjectName;
 
+        //Starting to create bug. Disable Create and Cancel buttons
+        this.setState({
+            createButtonDisabled: true,
+            cancelButtonDisabled: true,
+            formInputsDisabled: true
+        })
+
         //Create JSON Patch object
         var bugWitPatchArray: IBugWitPatchArray = [{
             op: "add",
             path: "/fields/System.Title",
             from: null,
             value: bugTitle.value
+        },
+        {
+            op: "add",
+            path: "/fields/Microsoft.VSTS.TCM.ReproSteps",
+            from: null,
+            value: bugReproSteps.value
         }];
 
         console.log("Creating new bug in project: " + this.props.currentProjectName)
@@ -162,6 +180,9 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                     console.log(JSON.stringify(sampleWit));
             });
         });
+
+        //Hide panel
+        this.setState({expanded: false});
     }
 
     private updateFormValid(): void {

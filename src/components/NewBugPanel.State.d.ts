@@ -10,4 +10,6 @@ export interface INewBugPanelState {
     reproStepsErrorMessage: string;
     isFormValid: boolean;
     createButtonDisabled: boolean;
+    cancelButtonDisabled: boolean;
+    formInputsDisabled: boolean;
 }
