@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "simple-bug-form-extension",
     "publisher": "Piotrsko",
-    "version": "1.0.235",
+    "version": "1.0.261",
     "name": "Simple bug report form",
     "description": "Simple bug report form extension",
     "public": false,
