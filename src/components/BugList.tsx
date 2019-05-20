@@ -63,7 +63,7 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
 
     onBugSelect(event: React.SyntheticEvent<HTMLElement>, data: ITableRow<ITableItem>) {
         console.log("Selected row: " + data.index + " " + data.data.Id)
-        this.props.showViewBugPanel(1999);
+        this.props.showViewBugPanel(data.data.Id);
     }
 
     public componentDidMount() {

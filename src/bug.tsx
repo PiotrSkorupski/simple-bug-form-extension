@@ -179,7 +179,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
 
         const viewBugPanel = this.viewBugPanelRef.current;
         if (viewBugPanel) {
-            viewBugPanel.showPanel();
+            viewBugPanel.showPanel(witId);
         }
     }
 
