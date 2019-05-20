@@ -11,11 +11,21 @@ import { FormItem } from "azure-devops-ui/FormItem";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 
 import restContractDefinitions = require('TFS/WorkItemTracking/Contracts');
+import restClientDefinitions = require('TFS/WorkItemTracking/RestClient');
 
 const idObservable = new ObservableValue<string>("");
 const titleObservable = new ObservableValue<string>("");
 const stateObservable = new ObservableValue<string>("");
 const reasonObservable = new ObservableValue<string>("");
+
+interface IBugWitPatch {
+    op: string;
+    path: string;
+    value: string;
+    from: string | null;
+}
+
+interface IBugWitPatchArray extends Array<IBugWitPatch>{}
 
 export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IViewBugPanelState> {
     constructor(props: IViewBugPanelProperties) {
@@ -26,9 +36,6 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             rejectButtonDisabled: false
         };
     }
-    
-    
-
 
     public render(): JSX.Element {
         return (
@@ -87,10 +94,53 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
 
     private ResolveBug() {
 
+        var bugWitPatchArray: IBugWitPatchArray = [{
+            op: "add",
+            path: "/fields/System.State",
+            from: null,
+            value: "Closed"
+        },
+        {
+            op: "add",
+            path: "/fields/System.Reason",
+            from: null,
+            value: "Fixed and verified"
+        }];
+
+        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+            var witClient = witRestClient.getClient();
+            var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
+            var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
+                (sampleWit:any) => {
+                    console.log("Bug closed: " + sampleWit)
+                }
+            );
+        });
     }
 
     private RejectBug() {
+        var bugWitPatchArray: IBugWitPatchArray = [{
+            op: "add",
+            path: "/fields/System.State",
+            from: null,
+            value: "Active"
+        },
+        {
+            op: "add",
+            path: "/fields/System.Reason",
+            from: null,
+            value: "Not fixed"
+        }];
 
+        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+            var witClient = witRestClient.getClient();
+            var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
+            var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
+                (sampleWit:any) => {
+                    console.log("Bug closed: " + sampleWit)
+                }
+            );
+        });
     }
 
     public showPanel(witId: number) {
