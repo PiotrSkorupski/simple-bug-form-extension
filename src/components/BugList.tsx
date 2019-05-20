@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { ITableItem } from "./MyOpenBugsTableData";
-import { IMyOpenBugsState } from "./MyOpenBugs.State";
-import { IMyOpenBugsProps } from "./MyOpenBugs.Props";
+import { ITableItem } from "./BugListTableData";
+import { IBugListState } from "./BugList.State";
+import { IBugListProps } from "./BugList.Props";
 
 import restClientDefinitions = require('TFS/WorkItemTracking/RestClient');
 import restContractDefinitions = require('TFS/WorkItemTracking/Contracts');
@@ -24,13 +24,14 @@ import {
 import { IterationReason } from 'TFS/VersionControl/Contracts';
 import { func } from 'prop-types';
 
-export class MyOpenBugs extends React.Component<IMyOpenBugsProps, IMyOpenBugsState> {
+export class BugList extends React.Component<IBugListProps, IBugListState> {
     private tableComponent = React.createRef<Table<ITableItem>>();
-    constructor(props: IMyOpenBugsProps) {
+    constructor(props: IBugListProps) {
         super(props);
         var emptyTable = new ObservableArray<ITableItem>();
         this.state = { 
-            tableContents: emptyTable
+            tableContents: emptyTable,
+            mode: this.props.mode
         };
     }
 
@@ -46,17 +47,35 @@ export class MyOpenBugs extends React.Component<IMyOpenBugsProps, IMyOpenBugsSta
         );
     };
 
-    
+    componentWillReceiveProps(props: IBugListProps) {
+        console.log("BugList received properties, mode " + this.props.mode);
+        this.setState({ mode:  this.props.mode });
+        //this.GetMyOpenBugs();
+    }
+
+    componentDidUpdate(prevProps: IBugListProps){
+        if (prevProps.mode !== this.props.mode) {
+            this.GetMyOpenBugs();
+        }
+    }
 
     public componentDidMount() {
         console.log('MyOpenBugs did mount');
         this.GetMyOpenBugs();
     }
 
+    private GetQuery() {
+        if (this.props.mode == "my-open-bugs") {
+            return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug' AND [System.State] NOT IN ('Closed','Completed','Resolved','Removed', 'Done')"};
+        } else {
+            return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug'"};
+        }
+    }
+
     private GetMyOpenBugs() {
         console.log('GetMyOpenBugs()');
         //var query = "SELECT [System.Id, System.State, System.Reason, System.Title, System.AssignedTo] FROM WorkItem WHERE [System.WorkItemType] = 'Bug' AND [System.State] NOT IN ('Closed','Completed','Resolved','Removed', 'Done')";
-        var query = {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug'"};
+        var query = this.GetQuery();
 
         var fields = [
             "System.Title", 

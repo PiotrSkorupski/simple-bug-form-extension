@@ -7,8 +7,7 @@ import { Header, TitleSize } from "azure-devops-ui/Header";
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import { Page } from "azure-devops-ui/Page";
 import { Tab, TabBar, TabSize } from "azure-devops-ui/Tabs";
-import {AllBugs} from "./components/AllBugs";
-import {MyOpenBugs} from "./components/MyOpenBugs";
+import { BugList } from "./components/BugList";
 import {Button} from "azure-devops-ui/Button";
 import {Panel} from "azure-devops-ui/Panel";
 import { NewBugPanel } from "./components/NewBugPanel"
@@ -155,21 +154,31 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     getPageContent() {
         const { selectedTabId } = this.state;
         
-        if (selectedTabId === "my-open-bugs")
-            return <MyOpenBugs/>;
-        if (selectedTabId === "my-all-bugs")
-            return <AllBugs/>;
+        if (selectedTabId === "my-open-bugs") {
+            console.count("getPageContent() " + selectedTabId);
+            return <BugList mode={"my-open-bugs"}/>;
+        }
+        if (selectedTabId === "my-all-bugs") {
+            console.count("getPageContent() " + selectedTabId);
+            return <BugList mode={"my-all-bugs"}/>;
+        }
         
 
     }
 
     onSelectedTabChanged(newTabId: string) {
         let currentComponent = this;
+        //var bugList = React.createRef<BugList>();
 
-        console.log('Tab changed to ' + newTabId)
+        console.log('Tab changed to ' + newTabId);
         currentComponent.setState({
             selectedTabId: newTabId
-        })
+        });
+
+        // if (bugList.current) {
+        //     console.log('Setting BugList state to: ' + newTabId);
+        //     bugList.current.setState({mode: "my-all-bugs"});
+        // }
     }
 
     getCommandBarItems() {
