@@ -11,6 +11,7 @@ import { BugList } from "./components/BugList";
 import {Button} from "azure-devops-ui/Button";
 import {Panel} from "azure-devops-ui/Panel";
 import { NewBugPanel } from "./components/NewBugPanel"
+import { ViewBugPanel } from "./components/ViewBugPanel"
 import { Toast } from "azure-devops-ui/Toast";
 import { string } from "prop-types";
 import { TaskAgentJobResultFilter } from "TFS/DistributedTask/Contracts";
@@ -22,6 +23,7 @@ interface IHubContentState {
     useLargeTitle?: boolean;
     useCompactPivots?: boolean;
     newBugPanelExpanded?: boolean;
+    viewBugPanelExpanded?: boolean;
     toastMessage: string;
     isToastVisible: boolean,
     isToastFadingOut: boolean
@@ -30,17 +32,22 @@ interface IHubContentState {
 class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     private toastRef = React.createRef<Toast>();
     private newBugPanelComponent = React.createRef<NewBugPanel>();
+    private viewBugPanelRef = React.createRef<ViewBugPanel>();
 
     constructor(props: {}) {
         super(props);
         this.onSelectedTabChanged = this.onSelectedTabChanged.bind(this);
         this.showToast = this.showToast.bind(this);
         this.fadeToast = this.fadeToast.bind(this);
+        this.showViewBugPanel = this.showViewBugPanel.bind(this);
+        this.hideViewBugPanel = this.hideViewBugPanel.bind(this);
+
 
         this.state = {
                 selectedTabId: "my-open-bugs", 
                 fullScreenMode: false, 
                 newBugPanelExpanded: false,
+                viewBugPanelExpanded: false,
                 toastMessage: "Bug submitted sucessfully",
                 isToastVisible: false,
                 isToastFadingOut: false    
@@ -75,6 +82,8 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         });
 
         VSS.notifyLoadSucceeded();
+
+        this.hideViewBugPanel();
     }
 
     render() {
@@ -91,7 +100,20 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 <div className="page-content">
                     { this.getPageContent() }
                 </div>
-                <NewBugPanel ref={this.newBugPanelComponent} currentProjectName="P1" showToast={this.showToast} fadeToast={this.fadeToast}></NewBugPanel>
+                <NewBugPanel 
+                    ref={this.newBugPanelComponent} 
+                    currentProjectName="P1" 
+                    showToast={this.showToast} 
+                    fadeToast={this.fadeToast}
+                >
+                </NewBugPanel>
+                <ViewBugPanel 
+                    ref={this.viewBugPanelRef} 
+                    currentProjectName="P1" 
+                    showToast={this.showToast} 
+                    fadeToast={this.fadeToast}
+                >
+                </ViewBugPanel>
                 {this.state.isToastVisible && (
                 <Toast
                         ref={this.toastRef}
@@ -151,16 +173,41 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         }
     }
 
+    showViewBugPanel = (witId: number) => {
+        console.log("showViewBugPanel(). WitID: " + witId);
+        this.setState({viewBugPanelExpanded: true});
+
+        const viewBugPanel = this.viewBugPanelRef.current;
+        if (viewBugPanel) {
+            viewBugPanel.showPanel();
+        }
+    }
+
+    hideViewBugPanel = () => {
+        console.log("hideViewBugPanel()");
+        if(this.viewBugPanelRef.current) {
+            this.viewBugPanelRef.current.setState({expanded: false});
+        }
+    }
+
     getPageContent() {
         const { selectedTabId } = this.state;
         
         if (selectedTabId === "my-open-bugs") {
             console.count("getPageContent() " + selectedTabId);
-            return <BugList mode={"my-open-bugs"}/>;
+            return <BugList 
+                mode={"my-open-bugs"}
+                showViewBugPanel={this.showViewBugPanel}
+                hideViewBugPanel={this.hideViewBugPanel}
+            />;
         }
         if (selectedTabId === "my-all-bugs") {
             console.count("getPageContent() " + selectedTabId);
-            return <BugList mode={"my-all-bugs"}/>;
+            return <BugList 
+                mode={"my-all-bugs"}
+                showViewBugPanel={this.showViewBugPanel}
+                hideViewBugPanel={this.hideViewBugPanel}
+            />;
         }
         
 

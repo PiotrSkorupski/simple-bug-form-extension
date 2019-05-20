@@ -19,7 +19,8 @@ import {
     sortItems,
     SortOrder,
     Table,
-    ITableColumn
+    ITableColumn,
+    ITableRow
 } from "azure-devops-ui/Table";
 import { IterationReason } from 'TFS/VersionControl/Contracts';
 import { func } from 'prop-types';
@@ -42,6 +43,7 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
                     //behaviors={[sortingBehavior]}
                     columns={columns}
                     itemProvider={this.state.tableContents}
+                    onSelect={(event, data) => this.onBugSelect(event, data)}
                 />
             </Card>
         );
@@ -57,6 +59,11 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
         if (prevProps.mode !== this.props.mode) {
             this.GetMyOpenBugs();
         }
+    }
+
+    onBugSelect(event: React.SyntheticEvent<HTMLElement>, data: ITableRow<ITableItem>) {
+        console.log("Selected row: " + data.index + " " + data.data.Id)
+        this.props.showViewBugPanel(1999);
     }
 
     public componentDidMount() {
