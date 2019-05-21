@@ -30,10 +30,11 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
     private tableComponent = React.createRef<Table<ITableItem>>();
     constructor(props: IBugListProps) {
         super(props);
-        var emptyTable = new ObservableArray<ITableItem>();
+        let emptyTable: ObservableArray<ITableItem> = new ObservableArray<ITableItem>();
         this.state = { 
             tableContents: emptyTable,
-            mode: this.props.mode
+            mode: this.props.mode,
+            rawTableContents: []
         };
     }
 
@@ -41,7 +42,7 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
         return (
             <Card className="simple-bug-form-page flex-grow bolt-table-card" contentProps={{ contentPadding: false }}>
                 <Table<ITableItem>
-                    //behaviors={[sortingBehavior]}
+                    behaviors={[this.sortingBehavior]}
                     columns={columns}
                     itemProvider={this.state.tableContents}
                     onSelect={(event, data) => this.onBugSelect(event, data)}
@@ -138,21 +139,79 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
                 State: value.fields["System.State"],
                 Reason: value.fields["System.Reason"],
                 CreatedBy: value.fields["System.CreatedBy"]["displayName"],
-                DateModified: value.fields["System.ChangedDate"]
+                Modified: value.fields["System.ChangedDate"]
             });
         });
 
         var tableItems = new ObservableArray<ITableItem>(rawTableItems);
 
-        this.setState({tableContents: tableItems})
+        this.setState({tableContents: tableItems, rawTableContents: rawTableItems})
     }
+
+    sortingBehavior = new ColumnSorting<ITableItem>(
+        (
+            columnIndex: number,
+            proposedSortOrder: SortOrder,
+            event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+        ) => {
+            console.log("Sorting occured");
+            this.state.tableContents.splice(
+                0, 
+                this.state.tableContents.length, 
+                ...sortItems<ITableItem>(
+                    columnIndex,
+                    proposedSortOrder,
+                    this.sortFunctions,
+                    columns,
+                    this.state.rawTableContents
+                )    
+            );
+        }
+    );
+    
+    sortFunctions = [
+        // Sort on Id column
+        (item1: ITableItem, item2: ITableItem): number => {
+            return item1.Id - item2.Id;
+        },
+        // Sort on Title column
+        (item1: ITableItem, item2: ITableItem): number => {
+            return item1.Title.text!.localeCompare(item2.Title.text!);
+        },
+        // CreatedBy column does not need a sort function
+        (item1: ITableItem, item2: ITableItem): number => {
+            return item1.CreatedBy!.localeCompare(item2.CreatedBy!);
+        },
+        //Sort on State
+        (item1: ITableItem, item2: ITableItem): number => {
+            return item1.State!.localeCompare(item2.State!);
+        },
+        //Sort on reason
+        (item1: ITableItem, item2: ITableItem): number => {
+            return item1.Reason!.localeCompare(item2.Reason!);
+        },
+        //Sort on modified date
+        (item1: ITableItem, item2: ITableItem): number => {
+            let date1 = new Date(item1.Modified);
+            let date2 = new Date(item2.Modified);
+            if (date1 == date2){
+                return 0
+            } else {
+                if (date1 > date2)
+                    return 1
+                else 
+                    return -1
+            }
+        },
+    ];
+    
 }
 
 const columns: ITableColumn<ITableItem>[] = [
     {
         id: "Id",
-        minWidth: 50,
-        maxWidth: 50,
+        minWidth: 60,
+        maxWidth: 60,
         name: "Id",
         onSize: onSize,
         renderCell: renderSimpleCell,
@@ -160,7 +219,7 @@ const columns: ITableColumn<ITableItem>[] = [
             ariaLabelAscending: "Sorted A to Z",
             ariaLabelDescending: "Sorted Z to A"
         },
-        width: new ObservableValue(50)
+        width: new ObservableValue(60)
     },
     {
         id: "Title",
@@ -211,7 +270,7 @@ const columns: ITableColumn<ITableItem>[] = [
         width: new ObservableValue(100)
     },
     {
-        id: "DateModified",
+        id: "Modified",
         maxWidth: 300,
         name: "Modified",
         onSize: onSize,
@@ -225,42 +284,8 @@ const columns: ITableColumn<ITableItem>[] = [
     //ColumnFill
 ];
 
-//var tableItems = new ObservableArray<ITableItem>(rawTableItems);
+//var tableItems = new ObservableArray<ITableItem>(this.state.tableContents);
 
-// const sortingBehavior = new ColumnSorting<ITableItem>(
-//     (
-//         columnIndex: number,
-//         proposedSortOrder: SortOrder,
-//         event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>
-//     ) => {
-//         tableItems.splice(
-//             0,
-//             tableItems.length,
-//             ...sortItems<ITableItem>(
-//                 columnIndex,
-//                 proposedSortOrder,
-//                 sortFunctions,
-//                 columns,
-//                 rawTableItems
-//             )
-//         );
-//     }
-// );
-
-const sortFunctions = [
-    // Sort on Name column
-    // (item1: ITableItem, item2: ITableItem): number => {
-    //     return item1.Id.text!.localeCompare(item2.Id.text!);
-    // },
-
-    // Sort on Age column
-    (item1: ITableItem, item2: ITableItem): number => {
-        return item1.Id - item2.Id;
-    },
-
-    // Gender column does not need a sort function
-    null
-];
 
 function onSize(event: MouseEvent, index: number, width: number) {
     (columns[index].width as ObservableValue<number>).value = width;

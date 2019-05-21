@@ -19,6 +19,8 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 export interface ITableItem extends ISimpleTableCell {
     Id: number;
     Title: ISimpleListCell;
+    CreatedBy: string;
     State: string;
     Reason: string;
+    Modified: string;
 }

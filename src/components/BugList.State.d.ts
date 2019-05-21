@@ -4,5 +4,6 @@ import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observabl
 
 export interface IBugListState {
     tableContents: ObservableArray<ITableItem>;
+    rawTableContents: ITableItem[];
     mode: string;
 }
