@@ -169,7 +169,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
         }];
 
         //Show toast
-        this.props.showToast();
+        //this.props.showToast("Submitting a bug");
 
         console.log("Creating new bug in project: " + this.props.currentProjectName)
         VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
@@ -179,7 +179,8 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
             var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), currentProjectName, "bug").then(
                 (sampleWit:any) => {
-                    this.props.fadeToast();
+                    //this.props.fadeToast("Bug submitted sucessfully");
+                    this.props.showDialog("Report a bug", "Bug submitted sucessfully");
                     this.clearForm();
                     console.log(sampleWit)
                 }

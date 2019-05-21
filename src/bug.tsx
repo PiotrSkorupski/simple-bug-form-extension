@@ -14,7 +14,11 @@ import { NewBugPanel } from "./components/NewBugPanel"
 import { ViewBugPanel } from "./components/ViewBugPanel"
 import { Toast } from "azure-devops-ui/Toast";
 import { string } from "prop-types";
-import { TaskAgentJobResultFilter } from "TFS/DistributedTask/Contracts";
+import { TaskAgentJobResultFilter, TaskAgentUpdateReasonType } from "TFS/DistributedTask/Contracts";
+import { Observer } from "azure-devops-ui/Observer";
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { CornerDialog } from "azure-devops-ui/Dialog";
+
 
 interface IHubContentState {
     selectedTabId: string;
@@ -33,12 +37,14 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     private toastRef = React.createRef<Toast>();
     private newBugPanelComponent = React.createRef<NewBugPanel>();
     private viewBugPanelRef = React.createRef<ViewBugPanel>();
+    private isDialogOpen = new ObservableValue<boolean>(false);
+    private dialogBody: string = "";
+    private dialogTitle: string = "";
 
     constructor(props: {}) {
         super(props);
         this.onSelectedTabChanged = this.onSelectedTabChanged.bind(this);
-        this.showToast = this.showToast.bind(this);
-        this.fadeToast = this.fadeToast.bind(this);
+        this.showDialog = this.showDialog.bind(this);
         this.showViewBugPanel = this.showViewBugPanel.bind(this);
         this.hideViewBugPanel = this.hideViewBugPanel.bind(this);
 
@@ -87,6 +93,9 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     }
 
     render() {
+        const onDismiss = () => {
+            this.isDialogOpen.value = false;
+        };
         return (
             <Page className="flex-grow">
             <Header title="Report a bug" titleSize={TitleSize.Large} commandBarItems={this.getCommandBarItems()}/>
@@ -103,74 +112,55 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 <NewBugPanel 
                     ref={this.newBugPanelComponent} 
                     currentProjectName="P1" 
-                    showToast={this.showToast} 
-                    fadeToast={this.fadeToast}
+                    showDialog={this.showDialog}
                 >
                 </NewBugPanel>
                 <ViewBugPanel 
                     ref={this.viewBugPanelRef} 
                     currentProjectName="P1" 
-                    showToast={this.showToast} 
-                    fadeToast={this.fadeToast}
+                    showDialog={this.showDialog}
                 >
                 </ViewBugPanel>
-                {this.state.isToastVisible && (
-                <Toast
-                        ref={this.toastRef}
-                        message={this.state.toastMessage}
-                />
-                )}
+                <Observer isDialogOpen={this.isDialogOpen}>
+                    {(props: { isDialogOpen: boolean }) => {
+                        return props.isDialogOpen ? (
+                            <CornerDialog
+                                onDismiss={onDismiss}
+                                footerButtonProps={[
+                                    {
+                                        onClick: onDismiss,
+                                        text: "Dismiss",
+                                        primary: true
+                                    }
+                                ]}
+                                titleProps={{
+                                    text: this.dialogTitle
+                                }}
+                            >
+                                <div className="flex-column">
+                                    <span className="body-m">
+                                        {this.dialogBody}
+                                    </span>
+                                </div>
+                            </CornerDialog>
+                        ) : null;
+                    }}
+                </Observer>
             </Page>
         );
     }
 
     onBugCreated() {
         console.log("SimpleBugFormHubContent onBugCreated()");
-        this.showToast();
     }
 
-    showToast = () => {
-        console.log("SimpleBugFormHubContent showToast()");
-        console.log("Toast isToastVisible: " + this.state.isToastVisible + " toastRef.current: " + this.toastRef.current);
-        this.setState({toastMessage: "Submitting bug"})
+    showDialog(title?:string, message?: string) {
+        if (message)
+            this.dialogBody = message;
+        if (title)
+            this.dialogTitle = title;
         
-        if (this.state.isToastFadingOut) {
-            console.log("Toast state fading out");
-            return;
-        }
-
-        if (this.state.isToastVisible && this.toastRef.current) {
-            console.log("Toast state visible reference current");
-            this.setState({ isToastFadingOut: true });
-            this.toastRef.current.fadeOut().promise.then(() => {
-                this.setState({ isToastVisible: false, isToastFadingOut: false });
-            });
-        } else {
-            console.log("Toast state not visible");
-            this.setState({ isToastVisible: true }, this.fadeToast);
-        }
-    }
-
-    fadeToast = () => {
-        console.log("SimpleBugFormHubContent fadeToast()");
-        console.log("Toast isToastVisible: " + this.state.isToastVisible + " toastRef.current: " + this.toastRef.current);
-
-        this.setState({toastMessage: "Bug submitted sucessfully"})
-
-        if (this.state.isToastFadingOut) {
-            console.log("Toast state fading out");
-            return;
-        }
-
-        setTimeout(function(){ console.log("Time passed") }, 3000);
-
-        if (this.state.isToastVisible && this.toastRef.current) {
-            console.log("Toast state visible reference current");
-            this.setState({ isToastFadingOut: true });
-            this.toastRef.current.fadeOut().promise.then(() => {
-                this.setState({ isToastVisible: false, isToastFadingOut: false });
-            });
-        }
+        this.isDialogOpen.value = true;
     }
 
     showViewBugPanel = (witId: number) => {
@@ -221,11 +211,6 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         currentComponent.setState({
             selectedTabId: newTabId
         });
-
-        // if (bugList.current) {
-        //     console.log('Setting BugList state to: ' + newTabId);
-        //     bugList.current.setState({mode: "my-all-bugs"});
-        // }
     }
 
     getCommandBarItems() {

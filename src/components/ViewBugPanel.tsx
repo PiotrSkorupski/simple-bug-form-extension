@@ -107,15 +107,18 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             value: "Fixed and verified"
         }];
 
-        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
             var witClient = witRestClient.getClient();
             var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
             var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
                 (sampleWit:any) => {
-                    console.log("Bug closed: " + sampleWit)
+                    console.log("Bug closed: " + sampleWit);
+                    this.props.showDialog("Report a bug", "Bug closed");
                 }
             );
         });
+
+        this.setState({expanded: false});  
     }
 
     private RejectBug() {
@@ -132,15 +135,18 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             value: "Not fixed"
         }];
 
-        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
             var witClient = witRestClient.getClient();
             var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
             var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
                 (sampleWit:any) => {
-                    console.log("Bug closed: " + sampleWit)
+                    console.log("Bug closed: " + sampleWit);
+                    this.props.showDialog("Report a bug", "Bug rejected");
                 }
             );
         });
+
+        this.setState({expanded: false});  
     }
 
     public showPanel(witId: number) {

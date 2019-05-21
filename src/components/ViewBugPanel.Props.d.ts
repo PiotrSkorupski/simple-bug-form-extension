@@ -4,6 +4,5 @@ export interface IViewBugPanelProperties {
     currentProjectName: string;
     currentCollectionName?: string;
     currentWitId?: number;
-    showToast(): void;
-    fadeToast(): void;
+    showDialog(title?:string, message?: string): void;
 }
