@@ -18,6 +18,7 @@ import { TaskAgentJobResultFilter, TaskAgentUpdateReasonType } from "TFS/Distrib
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { CornerDialog } from "azure-devops-ui/Dialog";
+import "./SimpleBugForm.css"
 
 
 interface IHubContentState {

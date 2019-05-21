@@ -24,6 +24,7 @@ import {
 } from "azure-devops-ui/Table";
 import { IterationReason } from 'TFS/VersionControl/Contracts';
 import { func } from 'prop-types';
+import { TaskAgentUpdateReasonType } from 'TFS/DistributedTask/Contracts';
 
 export class BugList extends React.Component<IBugListProps, IBugListState> {
     private tableComponent = React.createRef<Table<ITableItem>>();
@@ -38,12 +39,13 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
 
     render(): JSX.Element {
         return (
-            <Card className="flex-grow bolt-table-card" contentProps={{ contentPadding: false }}>
+            <Card className="simple-bug-form-page flex-grow bolt-table-card" contentProps={{ contentPadding: false }}>
                 <Table<ITableItem>
                     //behaviors={[sortingBehavior]}
                     columns={columns}
                     itemProvider={this.state.tableContents}
                     onSelect={(event, data) => this.onBugSelect(event, data)}
+                    scrollable={true}
                 />
             </Card>
         );

@@ -166,7 +166,14 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             path: "/fields/Microsoft.VSTS.TCM.ReproSteps",
             from: null,
             value: bugReproSteps.value
-        }];
+        },
+        {
+            op: "add",
+            path:"/fields/System.Tags",
+            from:null,
+            value: "UserBug"
+        }
+    ];
 
         //Show toast
         //this.props.showToast("Submitting a bug");
