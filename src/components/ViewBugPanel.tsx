@@ -48,7 +48,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                         "To resolve a bug or issue, please click Resolve button. To resolve a bug or issue, please click Reject button."
                     }
                     footerButtonProps={[
-                        { text: "Resolve", primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
+                        { text: "Close", primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
                         { text: "Reject", danger: true, onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled }
                     ]}
                     >

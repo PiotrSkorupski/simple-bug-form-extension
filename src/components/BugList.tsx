@@ -88,7 +88,9 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
             "System.Title", 
             "System.State", 
             "System.Reason",
-            "System.AssignedTo"
+            "System.AssignedTo",
+            "System.CreatedBy",
+            "System.ChangedDate"
         ];
 
         VSS.require(["VSS/Service", "TFS/WorkItemTracking/RestClient"], (vssService:any, witRestApi:any) => {
@@ -131,30 +133,15 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
                 Id:value.id, 
                 Title: {iconProps: { iconName: 'Bug'}, text: value.fields["System.Title"]}, 
                 State: value.fields["System.State"],
-                Reason: value.fields["System.Reason"]
+                Reason: value.fields["System.Reason"],
+                CreatedBy: value.fields["System.CreatedBy"]["displayName"],
+                DateModified: value.fields["System.ChangedDate"]
             });
         });
 
         var tableItems = new ObservableArray<ITableItem>(rawTableItems);
 
         this.setState({tableContents: tableItems})
-        
-        //var tableItems = new ObservableArray<ITableItem>(rawTableItems);
-
-        // rawTableItems: ITableItem[] = [
-        //     {
-        //         Id: 1,
-        //         Title: "Bug 1",
-        //         State: "New",
-        //         Reason: "Fixed"
-        //     },
-        //     {
-        //         Id: 2,
-        //         Title: "Bug 2",
-        //         State: "New",
-        //         Reason: "Fixed"
-        //     }
-        // ];
     }
 }
 
@@ -170,7 +157,7 @@ const columns: ITableColumn<ITableItem>[] = [
             ariaLabelAscending: "Sorted A to Z",
             ariaLabelDescending: "Sorted Z to A"
         },
-        width: new ObservableValue(200)
+        width: new ObservableValue(50)
     },
     {
         id: "Title",
@@ -186,9 +173,15 @@ const columns: ITableColumn<ITableItem>[] = [
     },
     { 
         id: "CreatedBy", 
+        maxWidth: 300,
         name: "Created By", 
-        width: new ObservableValue(100), 
-        renderCell: renderSimpleCell 
+        onSize: onSize,
+        renderCell: renderSimpleCell,
+        sortProps: {
+            ariaLabelAscending: "Sorted low to high",
+            ariaLabelDescending: "Sorted high to low"
+        },
+        width: new ObservableValue(150)
     },
     {
         id: "State",
@@ -224,7 +217,7 @@ const columns: ITableColumn<ITableItem>[] = [
             ariaLabelAscending: "Sorted low to high",
             ariaLabelDescending: "Sorted high to low"
         },
-        width: new ObservableValue(100)
+        width: new ObservableValue(150)
     }
     //ColumnFill
 ];
