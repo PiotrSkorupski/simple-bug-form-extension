@@ -104,8 +104,8 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                         selectedTabId={this.state.selectedTabId} 
                         onSelectedTabChanged={this.onSelectedTabChanged}
                 >
-                    <Tab name="My Open Bugs" id="my-open-bugs" />
-                    <Tab name="All My Bugs" id="my-all-bugs" />
+                    <Tab name="Bugs to retest and close" id="my-open-bugs" />
+                    <Tab name="All bugs reported by me" id="my-all-bugs" />
                 </TabBar>
                 <div className="page-content">
                     { this.getPageContent() }

@@ -49,7 +49,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     }
                     footerButtonProps={[
                         { text: "Close", primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
-                        { text: "Reject", danger: true, onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled }
+                        { text: "Reject", onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled }
                     ]}
                     >
                         <div style={{ height: "1200px" }}>
@@ -155,16 +155,30 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
     }
 
     private LoadWit(witId: number) {
-        VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
             var witClient = witRestClient.getClient();
             var wit: restContractDefinitions.WorkItem = witClient.getWorkItem(witId).then(
-                function(wit: restContractDefinitions.WorkItem) {
+                (wit: restContractDefinitions.WorkItem) => {
                     console.log("Selected: " + wit.id + " " + wit.fields["System.Title"]);
                     idObservable.value = wit.id.toString();
                     titleObservable.value = wit.fields["System.Title"];
                     stateObservable.value = wit.fields["System.State"];
                     reasonObservable.value = wit.fields["System.Reason"];
+                    this.setButtonsState();
             });
         });
+
+        
+    }
+
+    private setButtonsState() {
+        console.log("setButtonsState()");
+        if (stateObservable.value==="Resolved") {
+            console.log("setButtonsState() close / reject buttons active");
+            this.setState({rejectButtonDisabled:false, resolveButtonDisabled: false});
+        } else {
+            console.log("setButtonsState() close / reject buttons inactive");
+            this.setState({rejectButtonDisabled:true, resolveButtonDisabled: true});
+        }
     }
 }

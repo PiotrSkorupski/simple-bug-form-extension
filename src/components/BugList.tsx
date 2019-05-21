@@ -75,9 +75,10 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
 
     private GetQuery() {
         if (this.props.mode == "my-open-bugs") {
-            return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug' AND [System.State] NOT IN ('Closed','Completed','Resolved','Removed', 'Done')"};
+            //return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug' AND [System.State] NOT IN ('Closed','Completed','Resolved','Removed', 'Done')"};
+            return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug' AND [System.State] = 'Resolved' AND [System.AssignedTo] = @Me AND [System.TeamProject] = @project"};
         } else {
-            return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug'"};
+            return {query: "SELECT [System.Id], [System.Title] FROM WorkItem WHERE [System.WorkItemType] = 'Bug' AND [System.CreatedBy] = @Me AND [System.TeamProject] = @project"};
         }
     }
 
