@@ -178,13 +178,15 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
         //Show toast
         //this.props.showToast("Submitting a bug");
 
-        console.log("Creating new bug in project: " + this.props.currentProjectName)
+        var projectId = VSS.getWebContext().project.id;
+
+        console.log("Creating new bug in project: " + projectId)
         VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
             var witClient = witRestClient.getClient();
 
             //var sampleWitJsonPatch = '[{"op": "add","path": "/fields/System.Title","from": null,"value": "Sample task"}]';
             var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
-            var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), currentProjectName, "bug").then(
+            var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), projectId, "bug").then(
                 (sampleWit:any) => {
                     //this.props.fadeToast("Bug submitted sucessfully");
                     this.props.showDialog("Report a bug", "Bug submitted sucessfully");

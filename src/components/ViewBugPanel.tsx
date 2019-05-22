@@ -12,11 +12,19 @@ import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 
 import restContractDefinitions = require('TFS/WorkItemTracking/Contracts');
 import restClientDefinitions = require('TFS/WorkItemTracking/RestClient');
+import { Link } from "azure-devops-ui/Link";
 
 const idObservable = new ObservableValue<string>("");
 const titleObservable = new ObservableValue<string>("");
 const stateObservable = new ObservableValue<string>("");
 const reasonObservable = new ObservableValue<string>("");
+const bugDescriptionObservable = new ObservableValue<string>("");
+const bugReproObservable = new ObservableValue<string>("");
+const bugWitLinkObservable = new ObservableValue<string>("");
+const bugCreatedByObservable = new ObservableValue<string>("");
+const bugCreatedDateObservable = new ObservableValue<string>("");
+const bugModifiedByObservable = new ObservableValue<string>("");
+const bugModifiedDateObservable = new ObservableValue<string>("");
 
 interface IBugWitPatch {
     op: string;
@@ -38,6 +46,10 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
     }
 
     public render(): JSX.Element {
+        var bugLink = bugWitLinkObservable.value;
+        var bugEditLink = bugLink.substr(0, bugLink.lastIndexOf("/")) + "/edit" + bugLink.substr(bugLink.lastIndexOf("/"));
+        bugEditLink = bugEditLink.replace("_apis/wit/workItems", "_workitems");
+        console.log("Bug edit link: " + bugEditLink);
         return (
             <div>
                 {this.state.expanded && (
@@ -49,7 +61,8 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     }
                     footerButtonProps={[
                         { text: "Close", primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
-                        { text: "Reject", onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled }
+                        { text: "Reject", onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled },
+                        { text: "Cancel", subtle: true, onClick: () => this.setState({ expanded: false }), disabled: this.state.rejectButtonDisabled }
                     ]}
                     >
                         <div style={{ height: "1200px" }}>
@@ -69,6 +82,30 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
+                            <FormItem label={"Bug Description"}>
+                                <TextField
+                                    ariaLabel="Aria label"
+                                    value={bugDescriptionObservable}
+                                    multiline
+                                    rows={4}
+                                    width={TextFieldWidth.standard}
+                                    placeholder="Bug description"
+                                    disabled = {true}
+                                />
+                            </FormItem>
+                            <br/>
+                            <FormItem label={"Bug Description"}>
+                                <TextField
+                                    ariaLabel="Aria label"
+                                    value={bugReproObservable}
+                                    multiline
+                                    rows={4}
+                                    width={TextFieldWidth.standard}
+                                    placeholder="Bug repro"
+                                    disabled = {true}
+                                />
+                            </FormItem>
+                            <br/>
                             <FormItem label="State:">
                                 <TextField
                                 value={stateObservable}
@@ -85,11 +122,24 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
+                            <Link href={bugEditLink} subtle={true} target="_blank">Clik here for bug details</Link><br/>
+                            <Link href={bugEditLink} subtle={true} target="_blank">Clik here for associated test case</Link>
+                            <br/>
+                            <br/>
+                            <FormItem label="Created date: ">{bugCreatedDateObservable.value}</FormItem><br/>
+                            <FormItem label="Created by: ">{bugCreatedByObservable.value}</FormItem><br/>
+                            <FormItem label="Last changed date: ">{bugModifiedDateObservable.value}</FormItem><br/>
+                            <FormItem label="Last changed by: ">{bugModifiedByObservable.value}</FormItem><br/>
                         </div>
                     </Panel>
                     )}
             </div>
         );
+    }
+
+    private CancelBug() {
+        this.setState({expanded: false});
+        this
     }
 
     private ResolveBug() {
@@ -104,7 +154,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             op: "add",
             path: "/fields/System.Reason",
             from: null,
-            value: "Fixed and verified"
+            value: "Verified"
         }];
 
         VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
@@ -164,6 +214,14 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     titleObservable.value = wit.fields["System.Title"];
                     stateObservable.value = wit.fields["System.State"];
                     reasonObservable.value = wit.fields["System.Reason"];
+                    bugDescriptionObservable.value = wit.fields["Microsoft.VSTS.TCM.ReproSteps"];
+                    bugReproObservable.value = wit.fields["Microsoft.VSTS.TCM.ReproSteps"];
+                    bugWitLinkObservable.value = wit.url;
+                    bugCreatedByObservable.value = wit.fields["System.CreatedBy"];
+                    bugCreatedDateObservable.value = wit.fields["System.CreatedDate"];
+                    bugModifiedByObservable.value = wit.fields["System.ChangedBy"];
+                    bugModifiedDateObservable.value = wit.fields["System.ChangedDate"];;
+
                     this.setButtonsState();
             });
         });
