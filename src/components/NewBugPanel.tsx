@@ -6,13 +6,22 @@ import { INewBugPanelProperties } from "./NewBugPanel.Props";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import { FormItem } from "azure-devops-ui/FormItem";
+import { Dropdown } from "azure-devops-ui/Dropdown";
+import { IListBoxItem } from "azure-devops-ui/ListBox";
+import { Observer } from "azure-devops-ui/Observer";
+
+
+import restContractDefinitions = require('TFS/WorkItemTracking/Contracts');
+import restClientDefinitions = require('TFS/WorkItemTracking/RestClient');
 
 const bugTitle = new ObservableValue<string>("");
 const bugDescription = new ObservableValue<string>("");
 const bugReproSteps = new ObservableValue<string>("");
+const bugSeverity = new ObservableValue<string>("");
 const constBugTitleErrorMessage = "Bug title cannot be empty";
 const constBugDescriptionErrorMessage = "Description cannot be empty";
 const constReproStepsErorrMessage = "Repro steps cannot be empty";
+const constSeverityErorrMessage = "Choose severity";
 
 interface IBugWitPatch {
     op: string;
@@ -32,12 +41,14 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             isBugTitleError: true,
             isBugDescriptionError: true,
             isReproStepsError: true,
+            isSeverityError:true,
             isFormValid: false,
             createButtonDisabled: true,
             cancelButtonDisabled: false,
             bugTitleErrorMessage: constBugTitleErrorMessage,
             bugDescriptionErrorMessage: constBugDescriptionErrorMessage,
             reproStepsErrorMessage: constReproStepsErorrMessage,
+            severityErrorMessage: constSeverityErorrMessage,
             formInputsDisabled: false
         };
     }
@@ -131,6 +142,17 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     placeholder="Enter bug repro steps"
                                     disabled = {this.state.formInputsDisabled}
                                 />
+                            </FormItem><br/>
+                            <FormItem message={this.state.severityErrorMessage} error={this.state.isSeverityError} label={"Severity"}>
+                                <Dropdown
+                                    placeholder="Select severity"
+                                    items={[
+                                        { id: "2 - High", text: "High" },
+                                        { id: "3 - Medium", text: "Medium" },
+                                        { id: "4 - Low", text: "Low" }
+                                    ]}
+                                    onSelect={this.onSelect}
+                                />
                             </FormItem>
                         </div>
                     </Panel>
@@ -138,6 +160,13 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             </div>
         );
     }
+
+    private onSelect = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
+        bugSeverity.value = item.id || "";
+        this.setState ({isSeverityError: false});
+        this.setState ({severityErrorMessage: ""});
+        this.updateFormValid();
+    };
 
     public showPanel() {
         this.setState({expanded: true})
@@ -172,8 +201,35 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             path:"/fields/System.Tags",
             from:null,
             value: "UserBug"
+        },
+        {
+            op: "add",
+            path:"/fields/Microsoft.VSTS.Common.Severity",
+            from:null,
+            value: bugSeverity.value
         }
-    ];
+        ];
+
+        //Create JSON Patch object
+        var tcWitPatchArray: IBugWitPatchArray = [{
+            op: "add",
+            path: "/fields/System.Title",
+            from: null,
+            value: bugTitle.value
+        },
+        // {
+        //     op: "add",
+        //     path: "/fields/Microsoft.VSTS.TCM.ReproSteps",
+        //     from: null,
+        //     value: bugReproSteps.value
+        // },
+        {
+            op: "add",
+            path:"/fields/System.Tags",
+            from:null,
+            value: "BugTestCase"
+        }
+        ];
 
         //Show toast
         //this.props.showToast("Submitting a bug");
@@ -186,12 +242,18 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
 
             //var sampleWitJsonPatch = '[{"op": "add","path": "/fields/System.Title","from": null,"value": "Sample task"}]';
             var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
+            var testCaseWitJsonPath = JSON.stringify(tcWitPatchArray);
+            console.log("Creating bug: " + sampleWitJsonPatch);
             var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), projectId, "bug").then(
                 (sampleWit:any) => {
-                    //this.props.fadeToast("Bug submitted sucessfully");
-                    this.props.showDialog("Report a bug", "Bug submitted sucessfully");
-                    this.clearForm();
-                    console.log(sampleWit)
+                    var testCase = witClient.createWorkItem(JSON.parse(testCaseWitJsonPath), projectId, "Test Case").then(
+                        (tcWit:any) => {
+                            //this.props.fadeToast("Bug submitted sucessfully");
+                            this.props.showDialog("Report a bug", "Bug submitted sucessfully");
+                            this.clearForm();
+                            console.log(sampleWit) 
+                        }
+                    )
                 }
             );
         });
@@ -218,7 +280,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
 
     private updateFormValid(): void {
         //console.log("updateFormValid. BugTitleError: " + this.state.isBugTitleError + " DescError " + this.state.isBugDescriptionError + " ReproError " + this.state.isReproStepsError);
-        if (!this.state.isBugTitleError && !this.state.isBugDescriptionError && !this.state.isReproStepsError) 
+        if (!this.state.isBugTitleError && !this.state.isBugDescriptionError && !this.state.isReproStepsError && !this.state.isSeverityError) 
         {
             //console.log("Form valid");
             this.setState({isFormValid: true});
