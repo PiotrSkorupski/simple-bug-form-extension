@@ -6,4 +6,5 @@ export interface IBugListState {
     tableContents: ObservableArray<ITableItem>;
     rawTableContents: ITableItem[];
     mode: string;
+    dummy: string;
 }

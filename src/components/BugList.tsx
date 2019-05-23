@@ -34,7 +34,8 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
         this.state = { 
             tableContents: emptyTable,
             mode: this.props.mode,
-            rawTableContents: []
+            rawTableContents: [],
+            dummy: "dummy"
         };
     }
 
@@ -62,6 +63,11 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
         if (prevProps.mode !== this.props.mode) {
             this.GetMyOpenBugs();
         }
+    }
+
+    forceRefresh() {
+        console.log("Bug list forceRefresh()");
+        this.setState({ dummy: this.state.dummy });
     }
 
     onBugSelect(event: React.SyntheticEvent<HTMLElement>, data: ITableRow<ITableItem>) {
@@ -217,7 +223,8 @@ const columns: ITableColumn<ITableItem>[] = [
         renderCell: renderSimpleCell,
         sortProps: {
             ariaLabelAscending: "Sorted A to Z",
-            ariaLabelDescending: "Sorted Z to A"
+            ariaLabelDescending: "Sorted Z to A",
+            sortOrder: 1
         },
         width: new ObservableValue(60)
     },
@@ -285,7 +292,6 @@ const columns: ITableColumn<ITableItem>[] = [
 ];
 
 //var tableItems = new ObservableArray<ITableItem>(this.state.tableContents);
-
 
 function onSize(event: MouseEvent, index: number, width: number) {
     (columns[index].width as ObservableValue<number>).value = width;

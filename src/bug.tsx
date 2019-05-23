@@ -38,6 +38,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     private toastRef = React.createRef<Toast>();
     private newBugPanelComponent = React.createRef<NewBugPanel>();
     private viewBugPanelRef = React.createRef<ViewBugPanel>();
+    private bugListRef = React.createRef<BugList>();
     private isDialogOpen = new ObservableValue<boolean>(false);
     private dialogBody: string = "";
     private dialogTitle: string = "";
@@ -48,6 +49,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         this.showDialog = this.showDialog.bind(this);
         this.showViewBugPanel = this.showViewBugPanel.bind(this);
         this.hideViewBugPanel = this.hideViewBugPanel.bind(this);
+        this.forceUpdateBugList = this.forceUpdateBugList.bind(this);
 
 
         this.state = {
@@ -114,6 +116,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                     ref={this.newBugPanelComponent} 
                     currentProjectName="P1" 
                     showDialog={this.showDialog}
+                    refreshBugList = {this.forceUpdateBugList}
                 >
                 </NewBugPanel>
                 <ViewBugPanel 
@@ -153,6 +156,14 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
 
     onBugCreated() {
         console.log("SimpleBugFormHubContent onBugCreated()");
+    }
+
+    forceUpdateBugList() {
+        console.log("forceUpdateBugList()");
+        this.bugListRef = React.createRef<BugList>();
+        if (this.bugListRef.current) {
+            this.bugListRef.current.forceRefresh();
+        }
     }
 
     showDialog(title?:string, message?: string) {
@@ -200,8 +211,6 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 hideViewBugPanel={this.hideViewBugPanel}
             />;
         }
-        
-
     }
 
     onSelectedTabChanged(newTabId: string) {

@@ -75,14 +75,15 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     onChange={(e, newValue) => {
                                             bugTitle.value = newValue;
                                             if (this.isNotEmptyOrNull(newValue)) {
-                                                this.setState ({isBugTitleError: false});
-                                                this.setState ({bugTitleErrorMessage: ""});
+                                                this.setState ({isBugTitleError: false, bugTitleErrorMessage: ""},
+                                                    ()=>{this.updateFormValid()}
+                                                )
                                             }
                                             else {
-                                                this.setState ({isBugTitleError: true});
-                                                this.setState ({bugTitleErrorMessage: constBugTitleErrorMessage});
+                                                this.setState ({isBugTitleError: true, bugTitleErrorMessage: constBugTitleErrorMessage},
+                                                    ()=>{this.updateFormValid()}
+                                                );
                                             }
-                                            this.updateFormValid();
                                         }
                                     }
                                     placeholder="Enter bug title"
@@ -99,19 +100,21 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                         {
                                             bugDescription.value = newValue
                                             if (this.isNotEmptyOrNull(newValue)) {
-                                                this.setState ({isBugDescriptionError: false});
-                                                this.setState ({bugDescriptionErrorMessage: ""});
+                                                this.setState ({isBugDescriptionError: false, bugDescriptionErrorMessage: ""},
+                                                    ()=>{this.updateFormValid()}
+                                            );
+                                                
                                             }
                                             else
                                             {
-                                                this.setState ({isBugDescriptionError: true});
-                                                this.setState ({bugDescriptionErrorMessage: constBugDescriptionErrorMessage});
+                                                this.setState ({isBugDescriptionError: true, bugDescriptionErrorMessage: constBugDescriptionErrorMessage}, 
+                                                    ()=>{this.updateFormValid()});
                                             }
                                             this.updateFormValid();
                                         }
                                     }
                                     multiline
-                                    rows={4}
+                                    rows={8}
                                     width={TextFieldWidth.standard}
                                     placeholder="Enter bug description"
                                     disabled = {this.state.formInputsDisabled}
@@ -126,18 +129,22 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                         {
                                             bugReproSteps.value = newValue
                                             if (this.isNotEmptyOrNull(newValue)) {
-                                                this.setState ({isReproStepsError: false});
-                                                this.setState ({reproStepsErrorMessage: ""});
+                                                this.setState ({isReproStepsError: false, reproStepsErrorMessage: ""},
+                                                    ()=>{this.updateFormValid()}
+                                                );
+                                                
                                             }
                                             else {
-                                                this.setState ({isReproStepsError: true});
-                                                this.setState ({reproStepsErrorMessage: constReproStepsErorrMessage});
+                                                this.setState ({isReproStepsError: true, reproStepsErrorMessage: constReproStepsErorrMessage},
+                                                    ()=>{this.updateFormValid()}
+                                                );
+                                                
                                             }
                                             this.updateFormValid();
                                         }
                                     }
                                     multiline
-                                    rows={4}
+                                    rows={8}
                                     width={TextFieldWidth.standard}
                                     placeholder="Enter bug repro steps"
                                     disabled = {this.state.formInputsDisabled}
@@ -162,10 +169,12 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
     }
 
     private onSelect = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
+        console.log("Severity set to: " + item.id);
         bugSeverity.value = item.id || "";
-        this.setState ({isSeverityError: false});
-        this.setState ({severityErrorMessage: ""});
-        this.updateFormValid();
+        this.setState ({isSeverityError: false, severityErrorMessage: ""},
+        ()=>{
+            this.updateFormValid();
+        });
     };
 
     public showPanel() {
@@ -251,6 +260,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                             //this.props.fadeToast("Bug submitted sucessfully");
                             this.props.showDialog("Report a bug", "Bug submitted sucessfully");
                             this.clearForm();
+                            this.props.refreshBugList();
                             console.log(sampleWit) 
                         }
                     )
@@ -279,14 +289,14 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
     }
 
     private updateFormValid(): void {
-        //console.log("updateFormValid. BugTitleError: " + this.state.isBugTitleError + " DescError " + this.state.isBugDescriptionError + " ReproError " + this.state.isReproStepsError);
+        console.log("updateFormValid. BugTitleError: " + this.state.isBugTitleError + " DescError " + this.state.isBugDescriptionError + " ReproError " + this.state.isReproStepsError);
         if (!this.state.isBugTitleError && !this.state.isBugDescriptionError && !this.state.isReproStepsError && !this.state.isSeverityError) 
         {
-            //console.log("Form valid");
+            console.log("Form valid");
             this.setState({isFormValid: true});
             this.setState({createButtonDisabled: false});
         } else {
-            //console.log("Form not valid");
+            console.log("Form not valid");
             this.setState({isFormValid: false});
             this.setState({createButtonDisabled: true});
         }

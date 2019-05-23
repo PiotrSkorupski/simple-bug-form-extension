@@ -4,4 +4,5 @@ export interface INewBugPanelProperties {
     currentProjectName: string;
     currentCollectionName?: string;
     showDialog(title?:string, message?: string): void;
+    refreshBugList(): void;
 }
