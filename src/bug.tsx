@@ -82,7 +82,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
 
             VSS.require(["TFS/WorkItemTracking/RestClient"], function (witRestClient:any) {
                 var witClient = witRestClient.getClient();
-                var wits: any = witClient.getWorkItem(4).then(
+                var wits: any = witClient.getWorkItem(76).then(
                     function(wits:any) {
                         console.log(JSON.stringify(wits));
                 });

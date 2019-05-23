@@ -13,6 +13,12 @@ import { Observer } from "azure-devops-ui/Observer";
 
 import restContractDefinitions = require('TFS/WorkItemTracking/Contracts');
 import restClientDefinitions = require('TFS/WorkItemTracking/RestClient');
+import vssServiceDefinitions = require('VSS/Service');
+import testContractDefinitions = require('TFS/TestManagement/RestClient');
+import testClientDefinitions = require('TFS/TestManagement/Contracts');
+import testPaningClientDefinitions = require('TFS/TestManagement/TestPlanning/Contracts');
+
+
 
 const bugTitle = new ObservableValue<string>("");
 const bugDescription = new ObservableValue<string>("");
@@ -232,6 +238,12 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
         //     from: null,
         //     value: bugReproSteps.value
         // },
+        { 
+            op: "add", 
+            path: "/fields/Microsoft.VSTS.TCM.Steps",
+            from: null,
+            value: "<steps id=\"0\" last=\"1\"><step id=\"2\" type=\"ValidateStep\"><parameterizedString isformatted=\"true\">" + bugReproSteps.value + "</parameterizedString><parameterizedString isformatted=\"true\">Expectation step 1</parameterizedString><description/></step></steps>"  
+        },
         {
             op: "add",
             path:"/fields/System.Tags",
@@ -255,17 +267,28 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
             console.log("Creating bug: " + sampleWitJsonPatch);
             var sampleWit = witClient.createWorkItem(JSON.parse(sampleWitJsonPatch), projectId, "bug").then(
                 (sampleWit:any) => {
-                    var testCase = witClient.createWorkItem(JSON.parse(testCaseWitJsonPath), projectId, "Test Case").then(
-                        (tcWit:any) => {
+                    
                             //this.props.fadeToast("Bug submitted sucessfully");
                             this.props.showDialog("Report a bug", "Bug submitted sucessfully");
                             this.clearForm();
                             this.props.refreshBugList();
                             console.log(sampleWit) 
-                        }
-                    )
+                        
                 }
             );
+
+            var testCase = witClient.createWorkItem(JSON.parse(testCaseWitJsonPath), projectId, "Test Case").then(
+                (tcWit:any) => {
+                    console.log(tcWit) 
+            });
+        });
+
+        VSS.require(["VSS/Service", "TFS/TestManagement/RestClient"], (vssService:any, testRestApi:any) => {
+            var projectId = VSS.getWebContext().project.id;
+            console.log("GetMyOpenBugs current project id: " + projectId);
+
+            console.log("Trying to get witClient");
+            var testClient = testRestApi.getClient();
         });
 
         //Hide panel
