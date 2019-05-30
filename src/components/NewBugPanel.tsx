@@ -281,6 +281,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                 (tcWit:any) => {
                     console.log(tcWit) 
             });
+            
         });
 
         VSS.require(["VSS/Service", "TFS/TestManagement/RestClient"], (vssService:any, testRestApi:any) => {

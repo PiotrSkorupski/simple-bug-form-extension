@@ -14,6 +14,10 @@ import restContractDefinitions = require('TFS/WorkItemTracking/Contracts');
 import restClientDefinitions = require('TFS/WorkItemTracking/RestClient');
 import { Link } from "azure-devops-ui/Link";
 
+import { CornerDialog } from "azure-devops-ui/Dialog";
+import { Dialog } from "azure-devops-ui/Dialog";
+import { Observer } from "azure-devops-ui/Observer";
+
 const idObservable = new ObservableValue<string>("");
 const titleObservable = new ObservableValue<string>("");
 const stateObservable = new ObservableValue<string>("");
@@ -25,6 +29,9 @@ const bugCreatedByObservable = new ObservableValue<string>("");
 const bugCreatedDateObservable = new ObservableValue<string>("");
 const bugModifiedByObservable = new ObservableValue<string>("");
 const bugModifiedDateObservable = new ObservableValue<string>("");
+const bugCommentsObservable = new ObservableValue<string>("");
+const bugRejectReasonObservable = new ObservableValue<string>("");
+
 
 interface IBugWitPatch {
     op: string;
@@ -45,11 +52,22 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
         };
     }
 
+    private isRejectDialogOpen = new ObservableValue<boolean>(false);
+    private rejectDialogTitle: string = "Reject dialog title";
+    private rejectDialogBody: string = "Reject dialog body";
+
     public render(): JSX.Element {
         var bugLink = bugWitLinkObservable.value;
         var bugEditLink = bugLink.substr(0, bugLink.lastIndexOf("/")) + "/edit" + bugLink.substr(bugLink.lastIndexOf("/"));
         bugEditLink = bugEditLink.replace("_apis/wit/workItems", "_workitems");
         console.log("Bug edit link: " + bugEditLink);
+        const onRejectDialogDismiss = () => {
+            this.isRejectDialogOpen.value = false;
+        };
+        const onRejectDialogConfirm = () => {
+            this.isRejectDialogOpen.value = false;
+            this.onRejectConfirm();
+        };
         return (
             <div>
                 {this.state.expanded && (
@@ -122,6 +140,18 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
+                            <FormItem label={"Comments"}>
+                                <TextField
+                                    ariaLabel="Aria label"
+                                    value={bugCommentsObservable}
+                                    multiline
+                                    rows={8}
+                                    width={TextFieldWidth.standard}
+                                    placeholder="Comments"
+                                    disabled = {true}
+                                />
+                            </FormItem>
+                            <br/>
                             <Link href={bugEditLink} subtle={true} target="_blank">Clik here for bug details</Link><br/>
                             <Link href={bugEditLink} subtle={true} target="_blank">Clik here for associated test case</Link>
                             <br/>
@@ -133,13 +163,113 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                         </div>
                     </Panel>
                     )}
+                    <Observer isRejectDialogOpen={this.isRejectDialogOpen}>
+                    {(props: { isRejectDialogOpen: boolean }) => {
+                        return props.isRejectDialogOpen ? (
+                            <Dialog
+                                onDismiss={onRejectDialogDismiss}
+                                footerButtonProps={[
+                                    {
+                                        onClick: onRejectDialogConfirm,
+                                        text: "Reject",
+                                        primary: true,
+                                    },
+                                    {
+                                        onClick: onRejectDialogDismiss,
+                                        text: "Cancel",
+                                        primary: false,
+                                    }
+                                ]}
+                                titleProps={{
+                                    text: this.rejectDialogTitle
+                                }}
+                            >
+                                <div className="flex-column">
+                                    Please enter reject reason
+                                    <FormItem label={"Reject reason"}>
+                                    <TextField
+                                        ariaLabel="Aria label"
+                                        value={bugRejectReasonObservable}
+                                        onChange={(e, newValue) => 
+                                            {
+                                                bugRejectReasonObservable.value = newValue
+                                            }}
+                                        multiline
+                                        rows={6}
+                                        width={TextFieldWidth.standard}
+                                        placeholder="Reject reason"
+                                        disabled = {false}
+                                        readOnly = {false}
+                                    />
+                                    </FormItem>
+                                </div>
+                            </Dialog>
+                        ) : null;
+                    }}
+                </Observer>
             </div>
         );
     }
 
-    private CancelBug() {
-        this.setState({expanded: false});
-        this
+    onRejectConfirm() {
+        var currentdate = new Date(); 
+        var currentDateTimeString = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+        
+        var rejectReason = bugCommentsObservable.value + "\r\n" + currentDateTimeString + " Reject reason: " + bugRejectReasonObservable.value;
+        
+        var bugWitPatchArray: IBugWitPatchArray = [{
+            op: "add",
+            path: "/fields/System.State",
+            from: null,
+            value: "Active"
+        },
+        {
+            op: "add",
+            path: "/fields/System.Reason",
+            from: null,
+            value: "Not fixed"
+        },
+        {
+            op: "add",
+            path: "/fields/Microsoft.VSTS.CMMI.Comments",
+            from: null,
+            value: rejectReason
+        }];
+
+        VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
+            var witClient = witRestClient.getClient();
+            var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
+            var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
+                (sampleWit:any) => {
+                    console.log("Bug rejected: " + sampleWit);
+
+                    this.isRejectDialogOpen.value = false;
+                    bugRejectReasonObservable.value = "";
+                    this.setState({expanded: false});
+
+                    this.props.showDialog("Report a bug", "Bug rejected");
+                }
+            );
+        });
+
+        
+    }
+
+    RejectBug() {
+        console.log("showRejectDialog() parent, open: " + this.isRejectDialogOpen.value);
+        this.isRejectDialogOpen.value = true;
+        console.log("showRejectDialog() parent, open: " + this.isRejectDialogOpen.value);
+    }
+
+    clearRejectForm() {
+        this.isRejectDialogOpen.value = false;
+        bugRejectReasonObservable.value = "";
+        this.setState({expanded: false});  
     }
 
     private ResolveBug() {
@@ -155,7 +285,8 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             path: "/fields/System.Reason",
             from: null,
             value: "Verified"
-        }];
+        }
+    ];
 
         VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
             var witClient = witRestClient.getClient();
@@ -164,34 +295,6 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                 (sampleWit:any) => {
                     console.log("Bug closed: " + sampleWit);
                     this.props.showDialog("Report a bug", "Bug closed");
-                }
-            );
-        });
-
-        this.setState({expanded: false});  
-    }
-
-    private RejectBug() {
-        var bugWitPatchArray: IBugWitPatchArray = [{
-            op: "add",
-            path: "/fields/System.State",
-            from: null,
-            value: "Active"
-        },
-        {
-            op: "add",
-            path: "/fields/System.Reason",
-            from: null,
-            value: "Not fixed"
-        }];
-
-        VSS.require(["TFS/WorkItemTracking/RestClient"], (witRestClient:any) => {
-            var witClient = witRestClient.getClient();
-            var sampleWitJsonPatch = JSON.stringify(bugWitPatchArray);
-            var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
-                (sampleWit:any) => {
-                    console.log("Bug closed: " + sampleWit);
-                    this.props.showDialog("Report a bug", "Bug rejected");
                 }
             );
         });
@@ -209,6 +312,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             var witClient = witRestClient.getClient();
             var wit: restContractDefinitions.WorkItem = witClient.getWorkItem(witId).then(
                 (wit: restContractDefinitions.WorkItem) => {
+                    console.log(wit);
                     console.log("Selected: " + wit.id + " " + wit.fields["System.Title"]);
                     idObservable.value = wit.id.toString();
                     titleObservable.value = wit.fields["System.Title"];
@@ -220,7 +324,8 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     bugCreatedByObservable.value = wit.fields["System.CreatedBy"];
                     bugCreatedDateObservable.value = wit.fields["System.CreatedDate"];
                     bugModifiedByObservable.value = wit.fields["System.ChangedBy"];
-                    bugModifiedDateObservable.value = wit.fields["System.ChangedDate"];;
+                    bugModifiedDateObservable.value = wit.fields["System.ChangedDate"];
+                    bugCommentsObservable.value = wit.fields["Microsoft.VSTS.CMMI.Comments"];
 
                     this.setButtonsState();
             });

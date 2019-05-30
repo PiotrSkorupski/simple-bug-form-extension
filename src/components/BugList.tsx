@@ -113,6 +113,7 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
 
             witClient.queryByWiql(query, projectId).then(
                 (result:any) => {
+                    if (result.workItems.length > 0) {
                     console.log("Get wit Ids: " + result);
                     console.log("Get wit Ids count: " + result.length);
                     var bugsToRetestIds = result.workItems.map(function(wi:any) { return wi.id });
@@ -123,13 +124,16 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
                             // Access the work items and their field values
                             console.log("getWorkItems() count: " + bugs.length);
                             console.log(bugs);
-
+                                
                             this.UpdateBugsList(bugs);
-                            
+                                
                             VSS.notifyLoadSucceeded();
-                            
+                                
                         });
-                    VSS.notifyLoadSucceeded();   
+                        VSS.notifyLoadSucceeded();   
+                    } else {
+                        this.ClearBugsList();
+                    }
                 });               
         });
     }
@@ -153,6 +157,14 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
 
         this.setState({tableContents: tableItems, rawTableContents: rawTableItems})
     }
+
+    private ClearBugsList() {
+        let rawTableItems: ITableItem[] = [];
+
+       var tableItems = new ObservableArray<ITableItem>(rawTableItems);
+
+       this.setState({tableContents: tableItems, rawTableContents: rawTableItems})
+   }
 
     sortingBehavior = new ColumnSorting<ITableItem>(
         (

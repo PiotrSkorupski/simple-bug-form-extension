@@ -18,7 +18,12 @@ import { TaskAgentJobResultFilter, TaskAgentUpdateReasonType } from "TFS/Distrib
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { CornerDialog } from "azure-devops-ui/Dialog";
+import { Dialog } from "azure-devops-ui/Dialog";
+
 import "./SimpleBugForm.css"
+
+import { FormItem } from "azure-devops-ui/FormItem";
+import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 
 
 interface IHubContentState {
@@ -40,7 +45,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     private viewBugPanelRef = React.createRef<ViewBugPanel>();
     private bugListRef = React.createRef<BugList>();
     private isDialogOpen = new ObservableValue<boolean>(false);
-    private dialogBody: string = "";
+    private dialogBody: JSX.Element = this.getDialogBody();
     private dialogTitle: string = "";
 
     constructor(props: {}) {
@@ -167,12 +172,21 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
     }
 
     showDialog(title?:string, message?: string) {
-        if (message)
-            this.dialogBody = message;
+                
+        this.dialogBody = this.getDialogBody(message);
+
         if (title)
             this.dialogTitle = title;
         
         this.isDialogOpen.value = true;
+    }
+
+    getDialogBody(message?: string): JSX.Element {
+        console.log("getRejectDialogBody()");
+        if (message) 
+            return <div>{message}</div>;
+        else
+            return <div></div>;
     }
 
     showViewBugPanel = (witId: number) => {
