@@ -50,7 +50,10 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
         this.state = { 
             expanded: false,
             resolveButtonDisabled: false,
-            rejectButtonDisabled: false
+            rejectButtonDisabled: false,
+            dialogRejectButtonDisabled: true,
+            isRejectReasonError: true,
+            rejectReasonError: "Reject reason cannot be empty"
         };
     }
 
@@ -179,6 +182,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                         onClick: onRejectDialogConfirm,
                                         text: "Reject",
                                         primary: true,
+                                        disabled: this.state.dialogRejectButtonDisabled
                                     },
                                     {
                                         onClick: onRejectDialogDismiss,
@@ -191,15 +195,23 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 }}
                             >
                                 <div className="flex-column">
-                                    Please enter reject reason
-                                    <FormItem label={"Reject reason"}>
+                                    <FormItem label={"Please enter reject reason"} message={this.state.rejectReasonError} error={this.state.isRejectReasonError}>
                                     <TextField
                                         ariaLabel="Aria label"
                                         value={bugRejectReasonObservable}
                                         onChange={(e, newValue) => 
                                             {
-                                                bugRejectReasonObservable.value = newValue
-                                            }}
+                                                bugRejectReasonObservable.value = newValue;
+                                                if (this.isNotEmptyOrNull(newValue)) {
+                                                    // this.setState ({rejectButtonDisabled: false},
+                                                    //     ()=>{this.updateFormValid()}
+                                                    // );
+                                                    this.setState ({dialogRejectButtonDisabled: false, isRejectReasonError: false, rejectReasonError: ""});
+                                                } else {
+                                                    this.setState ({dialogRejectButtonDisabled: true, isRejectReasonError: true, rejectReasonError: "Reject reason cannot be empty"});
+                                                }
+                                            }
+                                    }      
                                         multiline
                                         rows={6}
                                         width={TextFieldWidth.standard}
@@ -229,6 +241,17 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
         bugModifiedDateObservable.value = "";
         bugModifiedByObservable.value = "";
         bugCommentsObservable.value = "";
+    }
+
+    private isNotEmptyOrNull(newValue: string): boolean {
+        console.log("isNotEmptyOrNull. Value: " + newValue + " Value length: " + newValue.length);
+        if (newValue && 0 < newValue.length) {
+            console.log("isNotEmptyOrNull true");
+            return true;
+        } else {
+            console.log("isNotEmptyOrNull false");
+            return false;
+        }
     }
 
     onRejectConfirm() {
