@@ -19,6 +19,9 @@ import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { CornerDialog } from "azure-devops-ui/Dialog";
 import { Dialog } from "azure-devops-ui/Dialog";
+import { LocalizationStrings } from "./Strings"
+
+import LocalizedStrings from 'react-localization';
 
 import "./SimpleBugForm.css"
 
@@ -114,13 +117,13 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         };
         return (
             <Page className="flex-grow">
-            <Header title="Report a bug" titleSize={TitleSize.Large} commandBarItems={this.getCommandBarItems()}/>
+            <Header title={LocalizationStrings.extensionName} titleSize={TitleSize.Large} commandBarItems={this.getCommandBarItems()}/>
                 <TabBar tabSize={TabSize.Tall} 
                         selectedTabId={this.state.selectedTabId} 
                         onSelectedTabChanged={this.onSelectedTabChanged}
                 >
-                    <Tab name="Bugs to retest and close" id="my-open-bugs" />
-                    <Tab name="All bugs reported by me" id="my-all-bugs" />
+                    <Tab name={LocalizationStrings.bugsToRetestTabName} id="my-open-bugs" />
+                    <Tab name={LocalizationStrings.allBugsTabName} id="my-all-bugs" />
                 </TabBar>
                 <div className="page-content">
                     { this.getPageContent() }
@@ -147,7 +150,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                                 footerButtonProps={[
                                     {
                                         onClick: onDismiss,
-                                        text: "Dismiss",
+                                        text: LocalizationStrings.cornerDialogDismissButtonText,
                                         primary: true
                                     }
                                 ]}
@@ -244,14 +247,14 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         return ([
             {
                 id: "panel",
-                text: "Submit a bug",
+                text: LocalizationStrings.submitBugButtonText,
                 onActivate: () => { this.onPanelClick() },
                 iconProps: {
                     iconName: 'Add'
                 },
                 isPrimary: true,
                 tooltipProps: {
-                    text: "Open a panel with custom extension content"
+                    text: LocalizationStrings.submitBugButtonTooltip
                 }
             }
         ]);

@@ -21,6 +21,7 @@
     "date-fns": "^2.0.0-alpha.27",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-localization": "^1.0.13",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^5.4.3",
     "typescript": "^3.4.5",

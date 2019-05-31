@@ -28,6 +28,8 @@ import { IterationReason } from 'TFS/VersionControl/Contracts';
 import { func } from 'prop-types';
 import { TaskAgentUpdateReasonType } from 'TFS/DistributedTask/Contracts';
 
+import { LocalizationStrings } from "../Strings"
+
 export class BugList extends React.Component<IBugListProps, IBugListState> {
     private tableComponent = React.createRef<Table<ITableItem>>();
     constructor(props: IBugListProps) {
@@ -149,7 +151,7 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
             console.log(value.id + " " + value.fields["System.Title"] + " " + value.fields["System.State"] + " " + value.fields["System.Reason"]);
             
             let changedDate: Date = new Date(value.fields["System.ChangedDate"]);
-            let parsedChangedDateString:string = format(changedDate, "dd.MM.yyyy HH:mm:ss");
+            let parsedChangedDateString:string = format(changedDate, LocalizationStrings.closeConfirmDialogTitle);
 
             rawTableItems.push({
                 Id:value.id, 
@@ -238,12 +240,12 @@ const columns: ITableColumn<ITableItem>[] = [
         id: "Id",
         minWidth: 60,
         maxWidth: 60,
-        name: "Id",
+        name: LocalizationStrings.bugIdColumnName,
         onSize: onSize,
         renderCell: renderSimpleCell,
         sortProps: {
-            ariaLabelAscending: "Sorted A to Z",
-            ariaLabelDescending: "Sorted Z to A",
+            ariaLabelAscending: LocalizationStrings.ariaLabelAscending,
+            ariaLabelDescending: LocalizationStrings.ariaLabelDescending,
             sortOrder: 1
         },
         width: new ObservableValue(60)
@@ -251,60 +253,60 @@ const columns: ITableColumn<ITableItem>[] = [
     {
         id: "Title",
         maxWidth: 300,
-        name: "Title",
+        name: LocalizationStrings.bugTitleColumnName,
         onSize: onSize,
         renderCell: renderSimpleCell,
         sortProps: {
-            ariaLabelAscending: "Sorted low to high",
-            ariaLabelDescending: "Sorted high to low"
+            ariaLabelAscending: LocalizationStrings.ariaLabelAscendingNumeric,
+            ariaLabelDescending: LocalizationStrings.ariaLabelDescendingNumeric
         },
         width: new ObservableValue(100)
     },
     { 
         id: "CreatedBy", 
         maxWidth: 300,
-        name: "Created By", 
+        name: LocalizationStrings.bugCreatedByColumName, 
         onSize: onSize,
         renderCell: renderSimpleCell,
         sortProps: {
-            ariaLabelAscending: "Sorted low to high",
-            ariaLabelDescending: "Sorted high to low"
+            ariaLabelAscending: LocalizationStrings.ariaLabelAscendingNumeric,
+            ariaLabelDescending: LocalizationStrings.ariaLabelDescendingNumeric
         },
         width: new ObservableValue(150)
     },
     {
         id: "State",
         maxWidth: 300,
-        name: "State",
+        name: LocalizationStrings.bugStateColumnName,
         onSize: onSize,
         renderCell: renderSimpleCell,
         sortProps: {
-            ariaLabelAscending: "Sorted low to high",
-            ariaLabelDescending: "Sorted high to low"
+            ariaLabelAscending: LocalizationStrings.ariaLabelAscendingNumeric,
+            ariaLabelDescending: LocalizationStrings.ariaLabelDescendingNumeric
         },
         width: new ObservableValue(100)
     },
     {
         id: "Reason",
         maxWidth: 300,
-        name: "Reason",
+        name: LocalizationStrings.bugReasonColumnName,
         onSize: onSize,
         renderCell: renderSimpleCell,
         sortProps: {
-            ariaLabelAscending: "Sorted low to high",
-            ariaLabelDescending: "Sorted high to low"
+            ariaLabelAscending: LocalizationStrings.ariaLabelAscendingNumeric,
+            ariaLabelDescending: LocalizationStrings.ariaLabelDescendingNumeric
         },
         width: new ObservableValue(100)
     },
     {
         id: "Modified",
         maxWidth: 300,
-        name: "Modified",
+        name: LocalizationStrings.bugModifiedDateColumnName,
         onSize: onSize,
         renderCell: renderSimpleCell,
         sortProps: {
-            ariaLabelAscending: "Sorted low to high",
-            ariaLabelDescending: "Sorted high to low"
+            ariaLabelAscending: LocalizationStrings.ariaLabelAscendingNumeric,
+            ariaLabelDescending: LocalizationStrings.ariaLabelDescendingNumeric
         },
         width: new ObservableValue(150)
     }

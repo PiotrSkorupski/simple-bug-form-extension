@@ -20,6 +20,8 @@ import { Observer } from "azure-devops-ui/Observer";
 
 import { format, formatDistance, formatRelative, subDays, parse } from 'date-fns'
 
+import { LocalizationStrings } from "../Strings"
+
 const idObservable = new ObservableValue<string>("");
 const titleObservable = new ObservableValue<string>("");
 const stateObservable = new ObservableValue<string>("");
@@ -53,7 +55,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             rejectButtonDisabled: false,
             dialogRejectButtonDisabled: true,
             isRejectReasonError: true,
-            rejectReasonError: "Reject reason cannot be empty"
+            rejectReasonError: LocalizationStrings.rejectReasonErrorMessage
         };
     }
 
@@ -81,14 +83,14 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                         this.setState({ expanded: false });
                         this.clearViewForm();
                     }}
-                    titleProps={{ text: "Resolve/Reject Bug" }}
+                    titleProps={{ text: LocalizationStrings.viewBugFormTitle }}
                     description={
-                        "To resolve a bug or issue, please click Resolve button. To resolve a bug or issue, please click Reject button."
+                        LocalizationStrings.viewBugFormDescription
                     }
                     footerButtonProps={[
-                        { text: "Close", primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
-                        { text: "Reject", onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled },
-                        { text: "Cancel", subtle: true, onClick: () => {
+                        { text: LocalizationStrings.viewBugFormCloseButtonText, primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
+                        { text: LocalizationStrings.viewBugFormRejectButtonText, onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled },
+                        { text: LocalizationStrings.viewBugFormCancelButtonText, subtle: true, onClick: () => {
                             this.setState({ expanded: false });
                             this.props.forceRefreshBugList();
                         }, 
@@ -96,7 +98,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     ]}
                     >
                         <div style={{ height: "1200px" }}>
-                            <FormItem label="Bug Id:">
+                            <FormItem label={LocalizationStrings.bugIdFieldLabel}>
                                 <TextField
                                 value={idObservable}
                                 width={TextFieldWidth.standard}
@@ -104,7 +106,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem label="Title:">
+                            <FormItem label={LocalizationStrings.bugTitleFieldLabel}>
                                 <TextField
                                 value={titleObservable}
                                 width={TextFieldWidth.standard}
@@ -112,7 +114,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem label={"Bug Description"}>
+                            <FormItem label={LocalizationStrings.bugDescriptionFieldLabel}>
                                 <TextField
                                     ariaLabel="Aria label"
                                     value={bugDescriptionObservable}
@@ -124,19 +126,18 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem label={"Bug Description"}>
+                            <FormItem label={LocalizationStrings.bugReproFieldLabel}>
                                 <TextField
                                     ariaLabel="Aria label"
                                     value={bugReproObservable}
                                     multiline
                                     rows={4}
                                     width={TextFieldWidth.standard}
-                                    placeholder="Bug repro"
                                     disabled = {true}
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem label="State:">
+                            <FormItem label={LocalizationStrings.bugStateFiledLabel}>
                                 <TextField
                                 value={stateObservable}
                                 width={TextFieldWidth.standard}
@@ -144,7 +145,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem label="Reason:">
+                            <FormItem label={LocalizationStrings.bugReasonFiledLabel}>
                                 <TextField
                                 value={reasonObservable}
                                 width={TextFieldWidth.standard}
@@ -152,7 +153,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem label={"Comments"}>
+                            <FormItem label={LocalizationStrings.bugCommentFieldLabel}>
                                 <TextField
                                     ariaLabel="Aria label"
                                     value={bugCommentsObservable}
@@ -165,14 +166,14 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 />
                             </FormItem>
                             <br/>
-                            <Link href={bugEditLink} subtle={true} target="_blank">Clik here for bug details</Link><br/>
-                            <Link href={bugEditLink} subtle={true} target="_blank">Clik here for associated test case</Link>
+                            <Link href={bugEditLink} subtle={true} target="_blank">{LocalizationStrings.bugDetailsLinkLabel}</Link><br/>
+                            <Link href={bugEditLink} subtle={true} target="_blank">{LocalizationStrings.bugTestCaseLinkLabel}</Link>
                             <br/>
                             <br/>
-                            <FormItem label="Created date: ">{bugCreatedDateObservable.value}</FormItem><br/>
-                            <FormItem label="Created by: ">{bugCreatedByObservable.value}</FormItem><br/>
-                            <FormItem label="Last changed date: ">{bugModifiedDateObservable.value}</FormItem><br/>
-                            <FormItem label="Last changed by: ">{bugModifiedByObservable.value}</FormItem><br/>
+                            <FormItem label={LocalizationStrings.bugCreatedDateFieldLabel}>{bugCreatedDateObservable.value}</FormItem><br/>
+                            <FormItem label={LocalizationStrings.bugCreatedByFieldLabel}>{bugCreatedByObservable.value}</FormItem><br/>
+                            <FormItem label={LocalizationStrings.bugModifiedDateFieldLabel}>{bugModifiedDateObservable.value}</FormItem><br/>
+                            <FormItem label={LocalizationStrings.bugModifiedByFieldLabel}>{bugModifiedByObservable.value}</FormItem><br/>
                         </div>
                     </Panel>
                     )}
@@ -184,13 +185,13 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 footerButtonProps={[
                                     {
                                         onClick: onRejectDialogConfirm,
-                                        text: "Reject",
+                                        text: LocalizationStrings.rejectDialogRejectButtonText,
                                         primary: true,
                                         disabled: this.state.dialogRejectButtonDisabled
                                     },
                                     {
                                         onClick: onRejectDialogDismiss,
-                                        text: "Cancel",
+                                        text: LocalizationStrings.rejectDialogCancelButtonText,
                                         primary: false,
                                     }
                                 ]}
@@ -199,7 +200,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                 }}
                             >
                                 <div className="flex-column">
-                                    <FormItem label={"Please enter reject reason"} message={this.state.rejectReasonError} error={this.state.isRejectReasonError}>
+                                    <FormItem label={LocalizationStrings.rejectReasonDialogFieldLablel} message={this.state.rejectReasonError} error={this.state.isRejectReasonError}>
                                     <TextField
                                         ariaLabel="Aria label"
                                         value={bugRejectReasonObservable}
@@ -212,14 +213,14 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                                     // );
                                                     this.setState ({dialogRejectButtonDisabled: false, isRejectReasonError: false, rejectReasonError: ""});
                                                 } else {
-                                                    this.setState ({dialogRejectButtonDisabled: true, isRejectReasonError: true, rejectReasonError: "Reject reason cannot be empty"});
+                                                    this.setState ({dialogRejectButtonDisabled: true, isRejectReasonError: true, rejectReasonError: LocalizationStrings.rejectReasonErrorMessage});
                                                 }
                                             }
                                     }      
                                         multiline
                                         rows={6}
                                         width={TextFieldWidth.standard}
-                                        placeholder="Reject reason"
+                                        placeholder={LocalizationStrings.rejectReasonDialogFieldPlaceholder}
                                         disabled = {false}
                                         readOnly = {false}
                                     />
@@ -259,7 +260,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
     }
 
     onRejectConfirm() {
-        var currentDateTimeString = format(new Date(), "dd.MM.yyyy HH:mm:ss");
+        var currentDateTimeString = format(new Date(), LocalizationStrings.dateTimeFormatString);
         
         var rejectReason = bugCommentsObservable.value + "\r\n" + currentDateTimeString + " Reject reason: " + bugRejectReasonObservable.value;
         
@@ -293,7 +294,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     bugRejectReasonObservable.value = "";
                     this.setState({expanded: false});
 
-                    this.props.showDialog("Report a bug", "Bug rejected");
+                    this.props.showDialog(LocalizationStrings.rejectConfirmDialogTitle, LocalizationStrings.rejectConfirmDialogMessage);
                     this.props.forceRefreshBugList();
                 }
             );
@@ -336,7 +337,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             var sampleWit = witClient.updateWorkItem(JSON.parse(sampleWitJsonPatch), idObservable.value).then(
                 (sampleWit:any) => {
                     console.log("Bug closed: " + sampleWit);
-                    this.props.showDialog("Report a bug", "Bug closed");
+                    this.props.showDialog(LocalizationStrings.closeConfirmDialogTitle, LocalizationStrings.closeConfirmDialogMessage);
                     this.props.forceRefreshBugList();
                 }
             );
@@ -367,12 +368,12 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     bugCreatedByObservable.value = wit.fields["System.CreatedBy"];
 
                     let createdDate: Date = new Date(wit.fields["System.CreatedDate"]);
-                    let parsedCreatedDateString:string = format(createdDate, "dd.MM.yyyy HH:mm:ss");
+                    let parsedCreatedDateString:string = format(createdDate, LocalizationStrings.dateTimeFormatString);
                     //console.log("Parsed created date: " + parsedCreatedDateString);
                     bugCreatedDateObservable.value = parsedCreatedDateString;
 
                     let changedDate: Date = new Date(wit.fields["System.CreatedDate"]);
-                    let parsedChangedDateString:string = format(changedDate, "dd.MM.yyyy HH:mm:ss");
+                    let parsedChangedDateString:string = format(changedDate, LocalizationStrings.dateTimeFormatString);
                     bugModifiedDateObservable.value = parsedChangedDateString;
                     
                     bugModifiedByObservable.value = wit.fields["System.ChangedBy"];

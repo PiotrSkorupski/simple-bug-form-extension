@@ -18,16 +18,18 @@ import testContractDefinitions = require('TFS/TestManagement/RestClient');
 import testClientDefinitions = require('TFS/TestManagement/Contracts');
 import testPaningClientDefinitions = require('TFS/TestManagement/TestPlanning/Contracts');
 
+import { LocalizationStrings } from "../Strings"
+
 
 
 const bugTitle = new ObservableValue<string>("");
 const bugDescription = new ObservableValue<string>("");
 const bugReproSteps = new ObservableValue<string>("");
 const bugSeverity = new ObservableValue<string>("");
-const constBugTitleErrorMessage = "Bug title cannot be empty";
-const constBugDescriptionErrorMessage = "Description cannot be empty";
-const constReproStepsErorrMessage = "Repro steps cannot be empty";
-const constSeverityErorrMessage = "Choose severity";
+const constBugTitleErrorMessage = LocalizationStrings.bugTitleErrorMessage;
+const constBugDescriptionErrorMessage = LocalizationStrings.bugDescriptionErrorMessage;
+const constReproStepsErorrMessage = LocalizationStrings.reproStepsErorrMessage;
+const constSeverityErorrMessage = LocalizationStrings.severityErorrMessage;
 
 interface IBugWitPatch {
     op: string;
@@ -65,17 +67,17 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                 {this.state.expanded && (
                     <Panel
                         onDismiss={() => this.setState({ expanded: false })}
-                        titleProps={{ text: "Bug report from" }}
+                        titleProps={{ text: LocalizationStrings.bugReportFormName }}
                         description={
-                            "To report a bug or issue, please fill below form and click Create button."
+                            LocalizationStrings.bugReportFormDescription
                         }
                         footerButtonProps={[
-                            { text: "Cancel", onClick: () => this.setState({ expanded: false }), disabled: this.state.createButtonDisabled },
-                            { text: "Create", primary: true, onClick: () => this.createNewBug(), disabled: this.state.createButtonDisabled }
+                            { text: LocalizationStrings.cancelCreateBugButtonText, onClick: () => this.setState({ expanded: false }), disabled: this.state.createButtonDisabled },
+                            { text: LocalizationStrings.createBugButtonText, primary: true, onClick: () => this.createNewBug(), disabled: this.state.createButtonDisabled }
                         ]}
                     >
                         <div style={{ height: "1200px" }}>
-                            <FormItem message={this.state.bugTitleErrorMessage} error={this.state.isBugTitleError} label={"Bug Title"}>
+                            <FormItem message={this.state.bugTitleErrorMessage} error={this.state.isBugTitleError} label={LocalizationStrings.bugTitleFieldLabel}>
                                 <TextField
                                     value={bugTitle}
                                     onChange={(e, newValue) => {
@@ -92,13 +94,13 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                             }
                                         }
                                     }
-                                    placeholder="Enter bug title"
+                                    placeholder={LocalizationStrings.bugTitleFieldPlaceholder}
                                     width={TextFieldWidth.standard}
                                     disabled = {this.state.formInputsDisabled}
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem message={this.state.bugDescriptionErrorMessage} error={this.state.isBugDescriptionError} label={"Bug Description"}>
+                            <FormItem message={this.state.bugDescriptionErrorMessage} error={this.state.isBugDescriptionError} label={LocalizationStrings.bugDescriptionFieldLabel}>
                                 <TextField
                                     ariaLabel="Aria label"
                                     value={bugDescription}
@@ -122,12 +124,12 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     multiline
                                     rows={8}
                                     width={TextFieldWidth.standard}
-                                    placeholder="Enter bug description"
+                                    placeholder={LocalizationStrings.bugDescriptionFieldPlaceholder}
                                     disabled = {this.state.formInputsDisabled}
                                 />
                             </FormItem>
                             <br/>
-                            <FormItem message={this.state.reproStepsErrorMessage} error={this.state.isReproStepsError} label={"Repro Steps"}>
+                            <FormItem message={this.state.reproStepsErrorMessage} error={this.state.isReproStepsError} label={LocalizationStrings.bugReproFieldLabel}>
                                 <TextField
                                     ariaLabel="Aria label"
                                     value={bugReproSteps}
@@ -152,13 +154,13 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                                     multiline
                                     rows={8}
                                     width={TextFieldWidth.standard}
-                                    placeholder="Enter bug repro steps"
+                                    placeholder={LocalizationStrings.bugReporFieldPlacehodler}
                                     disabled = {this.state.formInputsDisabled}
                                 />
                             </FormItem><br/>
-                            <FormItem message={this.state.severityErrorMessage} error={this.state.isSeverityError} label={"Severity"}>
+                            <FormItem message={this.state.severityErrorMessage} error={this.state.isSeverityError} label={LocalizationStrings.bugSeverityFieldLabel}>
                                 <Dropdown
-                                    placeholder="Select severity"
+                                    placeholder={LocalizationStrings.bugSeverityFieldPlaceholder}
                                     items={[
                                         { id: "2 - High", text: "High" },
                                         { id: "3 - Medium", text: "Medium" },
@@ -275,7 +277,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                 (sampleWit:any) => {
                     
                             //this.props.fadeToast("Bug submitted sucessfully");
-                            this.props.showDialog("Report a bug", "Bug submitted sucessfully");
+                            this.props.showDialog(LocalizationStrings.reportBugSuccessDialogTitle, LocalizationStrings.reportBugSuccessDialogMessage);
                             this.clearForm();
                             this.props.forceRefreshBugList();
                             console.log(sampleWit) 
