@@ -249,7 +249,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
 
     private isNotEmptyOrNull(newValue: string): boolean {
         console.log("isNotEmptyOrNull. Value: " + newValue + " Value length: " + newValue.length);
-        if (newValue && 0 < newValue.length) {
+        if (newValue && 0 < newValue.length && newValue.trim()) {
             console.log("isNotEmptyOrNull true");
             return true;
         } else {
