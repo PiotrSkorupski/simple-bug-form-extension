@@ -74,7 +74,10 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
             <div>
                 {this.state.expanded && (
                     <Panel
-                    onDismiss={() => this.setState({ expanded: false })}
+                    onDismiss={() => {
+                        this.setState({ expanded: false });
+                        this.clearViewForm();
+                    }}
                     titleProps={{ text: "Resolve/Reject Bug" }}
                     description={
                         "To resolve a bug or issue, please click Resolve button. To resolve a bug or issue, please click Reject button."
@@ -149,8 +152,9 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                                     multiline
                                     rows={8}
                                     width={TextFieldWidth.standard}
-                                    placeholder="Comments"
+                                    placeholder=""
                                     disabled = {true}
+                                    readOnly = {true}
                                 />
                             </FormItem>
                             <br/>
@@ -211,6 +215,20 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                 </Observer>
             </div>
         );
+    }
+
+    clearViewForm() {
+        titleObservable.value = "";
+        stateObservable.value = "";
+        reasonObservable.value = "";
+        bugDescriptionObservable.value = "";
+        bugReproObservable.value = "";
+        bugWitLinkObservable.value = "";
+        bugCreatedByObservable.value = "";
+        bugCreatedDateObservable.value = "";
+        bugModifiedDateObservable.value = "";
+        bugModifiedByObservable.value = "";
+        bugCommentsObservable.value = "";
     }
 
     onRejectConfirm() {
@@ -329,8 +347,12 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     bugModifiedDateObservable.value = parsedChangedDateString;
                     
                     bugModifiedByObservable.value = wit.fields["System.ChangedBy"];
-
                     bugCommentsObservable.value = wit.fields["Microsoft.VSTS.CMMI.Comments"];
+                    
+                    // if(wit.fields["Microsoft.VSTS.CMMI.Comments"] && wit.fields["Microsoft.VSTS.CMMI.Comments"].length <=0)
+                    //     bugCommentsObservable.value = "";
+                    // else
+                    //     bugCommentsObservable.value = wit.fields["Microsoft.VSTS.CMMI.Comments"];
 
                     this.setButtonsState();
             });
