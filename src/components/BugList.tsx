@@ -37,11 +37,13 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
             tableContents: emptyTable,
             mode: this.props.mode,
             rawTableContents: [],
-            dummy: "dummy"
+            dummy: "dummy",
+            dummyFlag: true
         };
     }
 
     render(): JSX.Element {
+        var refresh = this.props.forceRefreshBugList;
         return (
             <Card className="simple-bug-form-page flex-grow bolt-table-card" contentProps={{ contentPadding: false }}>
                 <Table<ITableItem>
@@ -62,14 +64,14 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
     }
 
     componentDidUpdate(prevProps: IBugListProps){
+        console.log("BugList componentDidUpdate()")
         if (prevProps.mode !== this.props.mode) {
             this.GetMyOpenBugs();
         }
-    }
-
-    forceRefresh() {
-        console.log("Bug list forceRefresh()");
-        this.setState({ dummy: this.state.dummy });
+        if (prevProps.forceRefreshBugList !== this.props.forceRefreshBugList) {
+            this.GetMyOpenBugs();
+        }
+        //this.GetMyOpenBugs();
     }
 
     onBugSelect(event: React.SyntheticEvent<HTMLElement>, data: ITableRow<ITableItem>) {

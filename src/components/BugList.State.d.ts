@@ -7,4 +7,5 @@ export interface IBugListState {
     rawTableContents: ITableItem[];
     mode: string;
     dummy: string;
+    dummyFlag: boolean;
 }

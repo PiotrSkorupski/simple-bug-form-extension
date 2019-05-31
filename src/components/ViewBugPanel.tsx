@@ -88,7 +88,11 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     footerButtonProps={[
                         { text: "Close", primary: true, onClick: () => this.ResolveBug(), disabled: this.state.resolveButtonDisabled },
                         { text: "Reject", onClick: () => this.RejectBug(), disabled: this.state.rejectButtonDisabled },
-                        { text: "Cancel", subtle: true, onClick: () => this.setState({ expanded: false }), disabled: this.state.rejectButtonDisabled }
+                        { text: "Cancel", subtle: true, onClick: () => {
+                            this.setState({ expanded: false });
+                            this.props.forceRefreshBugList();
+                        }, 
+                        disabled: false }
                     ]}
                     >
                         <div style={{ height: "1200px" }}>
@@ -290,6 +294,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     this.setState({expanded: false});
 
                     this.props.showDialog("Report a bug", "Bug rejected");
+                    this.props.forceRefreshBugList();
                 }
             );
         });
@@ -332,6 +337,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                 (sampleWit:any) => {
                     console.log("Bug closed: " + sampleWit);
                     this.props.showDialog("Report a bug", "Bug closed");
+                    this.props.forceRefreshBugList();
                 }
             );
         });

@@ -36,7 +36,8 @@ interface IHubContentState {
     viewBugPanelExpanded?: boolean;
     toastMessage: string;
     isToastVisible: boolean,
-    isToastFadingOut: boolean
+    isToastFadingOut: boolean,
+    forceRefreshBugList: boolean
 }
 
 class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
@@ -54,8 +55,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
         this.showDialog = this.showDialog.bind(this);
         this.showViewBugPanel = this.showViewBugPanel.bind(this);
         this.hideViewBugPanel = this.hideViewBugPanel.bind(this);
-        this.forceUpdateBugList = this.forceUpdateBugList.bind(this);
-
+        this.forceRefreshBugList = this.forceRefreshBugList.bind(this);
 
         this.state = {
                 selectedTabId: "my-open-bugs", 
@@ -64,10 +64,18 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 viewBugPanelExpanded: false,
                 toastMessage: "Bug submitted sucessfully",
                 isToastVisible: false,
-                isToastFadingOut: false    
+                isToastFadingOut: false,
+                forceRefreshBugList: false
             };
         
         super(props);
+    }
+
+    forceRefreshBugList =() => {
+        console.log("forceRefreshBugList() on parent");
+        console.log("forceRefreshBugList() state before " + this.state.forceRefreshBugList);
+        this.setState({forceRefreshBugList:!this.state.forceRefreshBugList}, () => {console.log("forceRefreshBugList() state after " + this.state.forceRefreshBugList);});
+        
     }
 
     public componentDidMount() {
@@ -121,13 +129,14 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                     ref={this.newBugPanelComponent} 
                     currentProjectName="P1" 
                     showDialog={this.showDialog}
-                    refreshBugList = {this.forceUpdateBugList}
+                    forceRefreshBugList={this.forceRefreshBugList}
                 >
                 </NewBugPanel>
                 <ViewBugPanel 
                     ref={this.viewBugPanelRef} 
                     currentProjectName="P1" 
                     showDialog={this.showDialog}
+                    forceRefreshBugList={this.forceRefreshBugList}
                 >
                 </ViewBugPanel>
                 <Observer isDialogOpen={this.isDialogOpen}>
@@ -161,14 +170,6 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
 
     onBugCreated() {
         console.log("SimpleBugFormHubContent onBugCreated()");
-    }
-
-    forceUpdateBugList() {
-        console.log("forceUpdateBugList()");
-        this.bugListRef = React.createRef<BugList>();
-        if (this.bugListRef.current) {
-            this.bugListRef.current.forceRefresh();
-        }
     }
 
     showDialog(title?:string, message?: string) {
@@ -215,6 +216,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 mode={"my-open-bugs"}
                 showViewBugPanel={this.showViewBugPanel}
                 hideViewBugPanel={this.hideViewBugPanel}
+                forceRefreshBugList={this.state.forceRefreshBugList}
             />;
         }
         if (selectedTabId === "my-all-bugs") {
@@ -223,6 +225,7 @@ class SimpleBugFormHubContent extends React.Component<{}, IHubContentState> {
                 mode={"my-all-bugs"}
                 showViewBugPanel={this.showViewBugPanel}
                 hideViewBugPanel={this.hideViewBugPanel}
+                forceRefreshBugList={this.state.forceRefreshBugList}
             />;
         }
     }

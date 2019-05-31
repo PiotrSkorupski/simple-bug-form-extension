@@ -5,4 +5,5 @@ export interface IViewBugPanelProperties {
     currentCollectionName?: string;
     currentWitId?: number;
     showDialog(title?:string, message?: string): void;
+    forceRefreshBugList():void;
 }

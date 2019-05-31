@@ -277,7 +277,7 @@ export class NewBugPanel extends React.Component<INewBugPanelProperties, INewBug
                             //this.props.fadeToast("Bug submitted sucessfully");
                             this.props.showDialog("Report a bug", "Bug submitted sucessfully");
                             this.clearForm();
-                            this.props.refreshBugList();
+                            this.props.forceRefreshBugList();
                             console.log(sampleWit) 
                         
                 }
