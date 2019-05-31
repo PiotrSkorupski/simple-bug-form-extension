@@ -11,6 +11,8 @@ import vssServiceDefinitions = require('VSS/Service');
 import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 
+import { format, formatDistance, formatRelative, subDays, parse } from 'date-fns'
+
 import { Card } from "azure-devops-ui/Card";
 import {
     ColumnFill,
@@ -143,13 +145,17 @@ export class BugList extends React.Component<IBugListProps, IBugListState> {
 
         bugs.forEach(function(value:restContractDefinitions.WorkItem) {
             console.log(value.id + " " + value.fields["System.Title"] + " " + value.fields["System.State"] + " " + value.fields["System.Reason"]);
+            
+            let changedDate: Date = new Date(value.fields["System.ChangedDate"]);
+            let parsedChangedDateString:string = format(changedDate, "dd.MM.yyyy HH:mm:ss");
+
             rawTableItems.push({
                 Id:value.id, 
                 Title: {iconProps: { iconName: 'Bug'}, text: value.fields["System.Title"]}, 
                 State: value.fields["System.State"],
                 Reason: value.fields["System.Reason"],
                 CreatedBy: value.fields["System.CreatedBy"]["displayName"],
-                Modified: value.fields["System.ChangedDate"]
+                Modified: parsedChangedDateString
             });
         });
 

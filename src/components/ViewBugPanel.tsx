@@ -18,6 +18,8 @@ import { CornerDialog } from "azure-devops-ui/Dialog";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 
+import { format, formatDistance, formatRelative, subDays, parse } from 'date-fns'
+
 const idObservable = new ObservableValue<string>("");
 const titleObservable = new ObservableValue<string>("");
 const stateObservable = new ObservableValue<string>("");
@@ -212,13 +214,7 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
     }
 
     onRejectConfirm() {
-        var currentdate = new Date(); 
-        var currentDateTimeString = currentdate.getDate() + "/"
-                + (currentdate.getMonth()+1)  + "/" 
-                + currentdate.getFullYear() + " @ "  
-                + currentdate.getHours() + ":"  
-                + currentdate.getMinutes() + ":" 
-                + currentdate.getSeconds();
+        var currentDateTimeString = format(new Date(), "dd.MM.yyyy HH:mm:ss");
         
         var rejectReason = bugCommentsObservable.value + "\r\n" + currentDateTimeString + " Reject reason: " + bugRejectReasonObservable.value;
         
@@ -322,9 +318,18 @@ export class ViewBugPanel extends React.Component<IViewBugPanelProperties, IView
                     bugReproObservable.value = wit.fields["Microsoft.VSTS.TCM.ReproSteps"];
                     bugWitLinkObservable.value = wit.url;
                     bugCreatedByObservable.value = wit.fields["System.CreatedBy"];
-                    bugCreatedDateObservable.value = wit.fields["System.CreatedDate"];
+
+                    let createdDate: Date = new Date(wit.fields["System.CreatedDate"]);
+                    let parsedCreatedDateString:string = format(createdDate, "dd.MM.yyyy HH:mm:ss");
+                    //console.log("Parsed created date: " + parsedCreatedDateString);
+                    bugCreatedDateObservable.value = parsedCreatedDateString;
+
+                    let changedDate: Date = new Date(wit.fields["System.CreatedDate"]);
+                    let parsedChangedDateString:string = format(changedDate, "dd.MM.yyyy HH:mm:ss");
+                    bugModifiedDateObservable.value = parsedChangedDateString;
+                    
                     bugModifiedByObservable.value = wit.fields["System.ChangedBy"];
-                    bugModifiedDateObservable.value = wit.fields["System.ChangedDate"];
+
                     bugCommentsObservable.value = wit.fields["Microsoft.VSTS.CMMI.Comments"];
 
                     this.setButtonsState();
